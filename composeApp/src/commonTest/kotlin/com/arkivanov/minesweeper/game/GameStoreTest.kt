@@ -71,13 +71,13 @@ class GameStoreTest {
     }
 
     @Test
-    fun WHEN_RevealCell_on_empty_cell_THEN_adjacent_cells_revealed() {
+    fun WHEN_RevealCell_on_bottom_right_empty_cell_THEN_adjacent_cells_revealed() {
         val store =
             storeFactory.gameStore(
                 State(
                     grid = grid(
                         listOf(mineClosed(), numberOpen(number = 1), noneClosed()),
-                        listOf(numberClosed(number = 1), numberOpen(number = 1), noneClosed()),
+                        listOf(numberClosed(number = 1), numberClosed(number = 1), noneClosed()),
                         listOf(noneClosed(), noneClosed(), noneClosed()),
                     ),
                     gameStatus = GameStatus.STARTED,
@@ -88,9 +88,35 @@ class GameStoreTest {
 
         assertEquals(
             grid(
-                listOf(mineClosed(), numberOpen(number = 1), Cell(status = CellStatus.Open)),
-                listOf(numberOpen(number = 1), numberOpen(number = 1), Cell(status = CellStatus.Open)),
-                listOf(Cell(status = CellStatus.Open), Cell(status = CellStatus.Open), Cell(status = CellStatus.Open)),
+                listOf(mineClosed(), numberOpen(number = 1), noneOpen()),
+                listOf(numberOpen(number = 1), numberOpen(number = 1), noneOpen()),
+                listOf(noneOpen(), noneOpen(), noneOpen()),
+            ),
+            store.state.grid,
+        )
+    }
+
+    @Test
+    fun WHEN_RevealCell_on_top_left_empty_cell_THEN_adjacent_cells_revealed() {
+        val store =
+            storeFactory.gameStore(
+                State(
+                    grid = grid(
+                        listOf(noneClosed(), noneClosed(), noneClosed()),
+                        listOf(noneClosed(), numberClosed(number = 1), numberClosed(number = 1)),
+                        listOf(noneClosed(), numberOpen(number = 1), mineClosed()),
+                    ),
+                    gameStatus = GameStatus.STARTED,
+                )
+            )
+
+        store.accept(Intent.RevealCell(x = 0, y = 0))
+
+        assertEquals(
+            grid(
+                listOf(noneOpen(), noneOpen(), noneOpen()),
+                listOf(noneOpen(), numberOpen(number = 1), numberOpen(number = 1)),
+                listOf(noneOpen(), numberOpen(number = 1), mineClosed()),
             ),
             store.state.grid,
         )

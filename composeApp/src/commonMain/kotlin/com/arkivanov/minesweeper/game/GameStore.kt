@@ -130,7 +130,7 @@ private fun MutableGrid.revealCell(location: Location, visited: MutableSet<Locat
 
     val cell = get(location)?.takeUnless { it.value.isMine || it.status.isOpen } ?: return false
     set(location, cell.open())
-    return true
+    return cell.value.isNone
 }
 
 private fun Grid.planted(count: Int, clickLocation: Location): Grid =
