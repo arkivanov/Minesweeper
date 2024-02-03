@@ -51,6 +51,13 @@ kotlin {
 
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
+
+            implementation(libs.mvikotlin)
+            implementation(libs.mvikotlin.main)
+        }
+
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
         }
 
         androidMain.dependencies {
