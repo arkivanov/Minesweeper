@@ -88,7 +88,7 @@ private fun newBoard(width: Int, height: Int): Grid =
 private fun State.reduce(intent: Intent): State =
     when (intent) {
         is Intent.RevealCell -> revealCell(location = intent.x by intent.y)
-        is Intent.ToggleFlag -> TODO()
+        is Intent.ToggleFlag -> toggleFlag(location = intent.x by intent.y)
     }
 
 private fun State.revealCell(location: Location): State =
@@ -170,4 +170,10 @@ private fun Grid.countAdjacentMines(location: Location): Int {
     }
 
     return count
+}
+
+private fun State.toggleFlag(location: Location): State {
+    val cell = grid.getValue(location)
+    val status = cell.status as? CellStatus.Closed ?: return this
+    return copy(grid = grid + (location to cell.copy(status = status.copy(isFlagged = true))))
 }

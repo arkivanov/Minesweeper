@@ -50,9 +50,9 @@ class GameStoreTest {
             storeFactory.gameStore(
                 State(
                     grid = grid(
-                        listOf(mineClosed(), numberOpen(number = 1), Cell()),
-                        listOf(numberClosed(number = 1), numberOpen(number = 1), Cell()),
-                        listOf(Cell(), Cell(), Cell()),
+                        listOf(mineClosed(), numberOpen(number = 1), noneClosed()),
+                        listOf(numberClosed(number = 1), numberOpen(number = 1), noneClosed()),
+                        listOf(noneClosed(), noneClosed(), noneClosed()),
                     ),
                     gameStatus = GameStatus.STARTED,
                 )
@@ -62,9 +62,9 @@ class GameStoreTest {
 
         assertEquals(
             grid(
-                listOf(mineClosed(), numberOpen(number = 1), Cell()),
-                listOf(numberClosed(number = 1), numberOpen(number = 1), Cell()),
-                listOf(Cell(), Cell(), Cell()),
+                listOf(mineClosed(), numberOpen(number = 1), noneClosed()),
+                listOf(numberClosed(number = 1), numberOpen(number = 1), noneClosed()),
+                listOf(noneClosed(), noneClosed(), noneClosed()),
             ),
             store.state.grid,
         )
@@ -76,9 +76,9 @@ class GameStoreTest {
             storeFactory.gameStore(
                 State(
                     grid = grid(
-                        listOf(mineClosed(), numberOpen(number = 1), Cell()),
-                        listOf(numberClosed(number = 1), numberOpen(number = 1), Cell()),
-                        listOf(Cell(), Cell(), Cell()),
+                        listOf(mineClosed(), numberOpen(number = 1), noneClosed()),
+                        listOf(numberClosed(number = 1), numberOpen(number = 1), noneClosed()),
+                        listOf(noneClosed(), noneClosed(), noneClosed()),
                     ),
                     gameStatus = GameStatus.STARTED,
                 )
@@ -102,9 +102,9 @@ class GameStoreTest {
             storeFactory.gameStore(
                 State(
                     grid = grid(
-                        listOf(mineClosed(), numberOpen(number = 1), Cell()),
-                        listOf(numberClosed(number = 1), numberOpen(number = 1), Cell()),
-                        listOf(Cell(), Cell(), Cell()),
+                        listOf(mineClosed(), numberOpen(number = 1), noneClosed()),
+                        listOf(numberClosed(number = 1), numberOpen(number = 1), noneClosed()),
+                        listOf(noneClosed(), noneClosed(), noneClosed()),
                     ),
                     gameStatus = GameStatus.STARTED,
                 )
@@ -114,9 +114,9 @@ class GameStoreTest {
 
         assertEquals(
             grid(
-                listOf(mineOpen(), numberOpen(number = 1), Cell()),
-                listOf(numberClosed(number = 1), numberOpen(number = 1), Cell()),
-                listOf(Cell(), Cell(), Cell()),
+                listOf(mineOpen(), numberOpen(number = 1), noneClosed()),
+                listOf(numberClosed(number = 1), numberOpen(number = 1), noneClosed()),
+                listOf(noneClosed(), noneClosed(), noneClosed()),
             ),
             store.state.grid,
         )
@@ -128,9 +128,9 @@ class GameStoreTest {
             storeFactory.gameStore(
                 State(
                     grid = grid(
-                        listOf(mineClosed(), numberOpen(number = 1), Cell()),
-                        listOf(numberClosed(number = 1), numberOpen(number = 1), Cell()),
-                        listOf(Cell(), Cell(), Cell()),
+                        listOf(mineClosed(), numberOpen(number = 1), noneClosed()),
+                        listOf(numberClosed(number = 1), numberOpen(number = 1), noneClosed()),
+                        listOf(noneClosed(), noneClosed(), noneClosed()),
                     ),
                     gameStatus = GameStatus.STARTED,
                 )
@@ -139,6 +139,60 @@ class GameStoreTest {
         store.accept(Intent.RevealCell(x = 0, y = 0))
 
         assertEquals(GameStatus.FINISHED, store.state.gameStatus)
+    }
+
+    @Test
+    fun WHEN_ToggleFlag_on_closed_cell_THEN_cell_flagged() {
+        val store =
+            storeFactory.gameStore(
+                State(
+                    grid = grid(
+                        listOf(mineClosed(), numberClosed(number = 1), noneClosed()),
+                        listOf(mineClosed(), numberClosed(number = 1), noneClosed()),
+                        listOf(mineClosed(), numberClosed(number = 1), noneClosed()),
+                    ),
+                )
+            )
+
+        store.accept(Intent.ToggleFlag(x = 0, y = 0))
+        store.accept(Intent.ToggleFlag(x = 1, y = 1))
+        store.accept(Intent.ToggleFlag(x = 2, y = 2))
+
+        assertEquals(
+            grid(
+                listOf(mineClosed(isFlagged = true), numberClosed(number = 1), noneClosed()),
+                listOf(mineClosed(), numberClosed(number = 1, isFlagged = true), noneClosed()),
+                listOf(mineClosed(), numberClosed(number = 1), noneClosed(isFlagged = true)),
+            ),
+            store.state.grid,
+        )
+    }
+
+    @Test
+    fun WHEN_ToggleFlag_on_open_cell_THEN_noop() {
+        val store =
+            storeFactory.gameStore(
+                State(
+                    grid = grid(
+                        listOf(mineOpen(), numberOpen(number = 1), noneOpen()),
+                        listOf(mineOpen(), numberOpen(number = 1), noneOpen()),
+                        listOf(mineOpen(), numberOpen(number = 1), noneOpen()),
+                    ),
+                )
+            )
+
+        store.accept(Intent.ToggleFlag(x = 0, y = 0))
+        store.accept(Intent.ToggleFlag(x = 1, y = 1))
+        store.accept(Intent.ToggleFlag(x = 2, y = 2))
+
+        assertEquals(
+            grid(
+                listOf(mineOpen(), numberOpen(number = 1), noneOpen()),
+                listOf(mineOpen(), numberOpen(number = 1), noneOpen()),
+                listOf(mineOpen(), numberOpen(number = 1), noneOpen()),
+            ),
+            store.state.grid,
+        )
     }
 
     private fun grid(vararg columns: Collection<Cell>): Grid =
@@ -161,4 +215,10 @@ class GameStoreTest {
 
     private fun numberOpen(number: Int): Cell =
         Cell(value = CellValue.Number(number = number), status = CellStatus.Open)
+
+    private fun noneClosed(isFlagged: Boolean = false): Cell =
+        Cell(value = CellValue.None, status = CellStatus.Closed(isFlagged = isFlagged))
+
+    private fun noneOpen(): Cell =
+        Cell(value = CellValue.None, status = CellStatus.Open)
 }
