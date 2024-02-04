@@ -19,5 +19,7 @@ fun main() {
 
     lifecycle.resume()
 
-    CanvasBasedWindow(canvasElementId = "ComposeTarget") { App(root) }
+    CanvasBasedWindow(title = "Minesweeper", canvasElementId = "ComposeTarget") {
+        App(root)
+    }
 }
