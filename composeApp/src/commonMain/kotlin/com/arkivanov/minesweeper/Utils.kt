@@ -9,6 +9,7 @@ import com.arkivanov.mvikotlin.core.store.Store
 internal expect fun Modifier.onClick(
     onPrimaryClick: () -> Unit,
     onSecondaryClick: () -> Unit,
+    onTertiaryClick: () -> Unit,
 ): Modifier
 
 internal fun <T : Any> Store<*, T, *>.asValue(): Value<T> =

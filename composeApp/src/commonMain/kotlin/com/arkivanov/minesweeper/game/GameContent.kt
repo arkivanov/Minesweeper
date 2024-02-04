@@ -3,7 +3,6 @@ package com.arkivanov.minesweeper.game
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +42,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                                 .onClick(
                                     onPrimaryClick = { component.onCellPrimaryAction(x = x, y = y) },
                                     onSecondaryClick = { component.onCellSecondaryAction(x = x, y = y) },
+                                    onTertiaryClick = { component.onCellTertiaryAction(x = x, y = y) },
                                 )
                         )
                     }
@@ -118,4 +118,5 @@ internal class PreviewGameComponent : GameComponent {
 
     override fun onCellPrimaryAction(x: Int, y: Int) {}
     override fun onCellSecondaryAction(x: Int, y: Int) {}
+    override fun onCellTertiaryAction(x: Int, y: Int) {}
 }

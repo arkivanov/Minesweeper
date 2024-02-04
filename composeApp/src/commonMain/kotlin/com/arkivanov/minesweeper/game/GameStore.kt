@@ -58,6 +58,7 @@ private fun Cell.open(): Cell =
 
 internal sealed interface Intent {
     data class RevealCell(val x: Int, val y: Int) : Intent
+    data class RevealCellsAround(val x: Int, val y: Int) : Intent
     data class ToggleFlag(val x: Int, val y: Int) : Intent
 }
 
@@ -88,14 +89,15 @@ private fun newBoard(width: Int, height: Int): Grid =
 private fun State.reduce(intent: Intent): State =
     when (intent) {
         is Intent.RevealCell -> revealCell(location = intent.x by intent.y)
+        is Intent.RevealCellsAround -> revealCellsAround(location = intent.x by intent.y)
         is Intent.ToggleFlag -> toggleFlag(location = intent.x by intent.y)
     }
 
 private fun State.revealCell(location: Location): State =
     when (gameStatus) {
         GameStatus.FINISHED -> this
-        GameStatus.INITIALIZED -> start(clickLocation = location).revealCells(clickLocation = location)
-        GameStatus.STARTED -> revealCells(clickLocation = location)
+        GameStatus.INITIALIZED -> start(clickLocation = location).revealCells(centerLocation = location)
+        GameStatus.STARTED -> revealCells(centerLocation = location)
     }
 
 private fun State.start(clickLocation: Location): State =
@@ -104,12 +106,16 @@ private fun State.start(clickLocation: Location): State =
         gameStatus = GameStatus.STARTED,
     )
 
-private fun State.revealCells(clickLocation: Location): State {
-    val cell = grid.getValue(clickLocation).takeUnless { it.status.isOpen } ?: return this
-    val boardWithOpenCell = grid + (clickLocation to cell.open())
+private fun State.revealCells(centerLocation: Location): State {
+    if (gameStatus != GameStatus.STARTED) {
+        return this
+    }
+
+    val cell = grid.getValue(centerLocation).takeUnless { it.status.isOpen } ?: return this
+    val boardWithOpenCell = grid + (centerLocation to cell.open())
 
     return when (cell.value) {
-        is CellValue.None -> copy(grid = boardWithOpenCell.toMutableMap().apply { revealAdjacentCells(location = clickLocation) })
+        is CellValue.None -> copy(grid = boardWithOpenCell.toMutableMap().apply { revealAdjacentCells(location = centerLocation) })
         is CellValue.Mine -> copy(grid = boardWithOpenCell, gameStatus = GameStatus.FINISHED)
         is CellValue.Number -> copy(grid = boardWithOpenCell)
     }
@@ -170,6 +176,40 @@ private fun Grid.countAdjacentMines(location: Location): Int {
     }
 
     return count
+}
+
+private fun State.revealCellsAround(location: Location): State {
+    if (gameStatus != GameStatus.STARTED) {
+        return this
+    }
+
+    val cell = grid.getValue(location)
+    val number = cell.value as? CellValue.Number ?: return this
+
+    var flagCount = 0
+    val locationsToReveal = ArrayList<Location>()
+    location.forEachAdjacent { loc ->
+        val c = grid[loc] ?: return@forEachAdjacent
+        val status = c.status
+        if (status is CellStatus.Closed) {
+            if (status.isFlagged) {
+                flagCount++
+            } else {
+                locationsToReveal += loc
+            }
+        }
+    }
+
+    if (flagCount != number.number) {
+        return this
+    }
+
+    var newState = this
+    locationsToReveal.forEach { loc ->
+        newState = newState.revealCells(centerLocation = loc)
+    }
+
+    return newState
 }
 
 private fun State.toggleFlag(location: Location): State {

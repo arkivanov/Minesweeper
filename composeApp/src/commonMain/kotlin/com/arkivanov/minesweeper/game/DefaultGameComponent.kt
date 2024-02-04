@@ -25,4 +25,8 @@ internal class DefaultGameComponent(
     override fun onCellSecondaryAction(x: Int, y: Int) {
         store.accept(Intent.ToggleFlag(x = x, y = y))
     }
+
+    override fun onCellTertiaryAction(x: Int, y: Int) {
+        store.accept(Intent.RevealCellsAround(x = x, y = y))
+    }
 }

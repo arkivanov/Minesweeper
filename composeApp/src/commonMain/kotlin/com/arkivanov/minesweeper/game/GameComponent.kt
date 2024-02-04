@@ -8,4 +8,5 @@ internal interface GameComponent {
 
     fun onCellPrimaryAction(x: Int, y: Int)
     fun onCellSecondaryAction(x: Int, y: Int)
+    fun onCellTertiaryAction(x: Int, y: Int)
 }

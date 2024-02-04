@@ -10,9 +10,15 @@ import androidx.compose.ui.input.pointer.PointerButton
 internal actual fun Modifier.onClick(
     onPrimaryClick: () -> Unit,
     onSecondaryClick: () -> Unit,
+    onTertiaryClick: () -> Unit,
 ): Modifier =
     onClick(onClick = onPrimaryClick)
         .onClick(
             matcher = PointerMatcher.mouse(PointerButton.Secondary),
             onClick = onSecondaryClick,
         )
+        .onClick(
+            matcher = PointerMatcher.mouse(PointerButton.Tertiary),
+            onClick = onTertiaryClick,
+        )
+
