@@ -11,6 +11,8 @@ Tech stack:
 
 Supported targets: Desktop (JVM) and Wasm Browser.
 
+Running desktop app: `./gradlew :composeApp:run`
+
 Wasm browser app: https://arkivanov.github.io/Minesweeper
 
 Known issues:
