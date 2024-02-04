@@ -20,7 +20,9 @@ jobs:
           java-version: 17
 
       - name: Build
-        run: ./gradlew wasmJsBrowserDistribution
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: :composeApp:wasmJsBrowserDistribution
 
       - name: Deploy browser app
         uses: JamesIves/github-pages-deploy-action@v4.5.0

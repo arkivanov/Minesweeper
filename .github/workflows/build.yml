@@ -16,4 +16,6 @@ jobs:
           java-version: 17
 
       - name: Build
-        run: ./gradlew build
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: build
