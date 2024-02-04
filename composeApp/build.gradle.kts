@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.serialization)
 }
@@ -22,26 +21,7 @@ kotlin {
         }
     }
 
-    androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
-    }
-
     jvm()
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach { iosTarget ->
-        iosTarget.binaries.framework {
-            baseName = "ComposeApp"
-//            isStatic = true
-        }
-    }
 
     sourceSets {
         commonMain.dependencies {
@@ -63,43 +43,9 @@ kotlin {
             implementation(libs.kotlin.test)
         }
 
-        androidMain.dependencies {
-            implementation(libs.androidx.activity.compose)
-        }
-
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
         }
-    }
-}
-
-android {
-    namespace = "com.arkivanov.minesweeper"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = "com.arkivanov.minesweeper"
-        minSdk = libs.versions.android.minSdk.get().toInt()
-        targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
-    }
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
 
