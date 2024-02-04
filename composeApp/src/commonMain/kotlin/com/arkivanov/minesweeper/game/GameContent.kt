@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.changedToDown
 import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.isSecondaryPressed
@@ -34,8 +35,6 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 
 private val cellSize = 16.dp
 
@@ -78,11 +77,10 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun CellContent(cell: Cell, modifier: Modifier = Modifier) {
     Image(
-        painter = painterResource(cell.painterName()),
+        painter = cell.painter(),
         contentDescription = null,
         modifier = modifier,
         contentScale = ContentScale.FillBounds,
@@ -104,15 +102,12 @@ private fun RestartButton(
         }
     }
 
-    @OptIn(ExperimentalResourceApi::class)
     Image(
-        painter = painterResource(
-            when {
-                isPressed -> "smile_pressed.png"
-                isTrying -> "smile_trying.png"
-                else -> "smile_normal.png"
-            }
-        ),
+        painter = when {
+            isPressed -> GameIcons.smilePressed
+            isTrying -> GameIcons.smileTrying
+            else -> GameIcons.smileNormal
+        },
         contentDescription = "Restart",
         modifier = modifier
             .size(26.dp)
@@ -126,20 +121,21 @@ private fun RestartButton(
 
 }
 
-private fun Cell.painterName(): String =
+@Composable
+private fun Cell.painter(): Painter =
     when (status) {
         is CellStatus.Closed ->
             when {
-                status.isFlagged -> "cell_closed_flag.png"
-                status.isPressed -> "cell_open.png"
-                else -> "cell_closed.png"
+                status.isFlagged -> GameIcons.cellClosedFlag
+                status.isPressed -> GameIcons.cellOpen
+                else -> GameIcons.cellClosed
             }
 
         is CellStatus.Open ->
             when (value) {
-                is CellValue.None -> "cell_open.png"
-                is CellValue.Mine -> "cell_open_mine.png"
-                is CellValue.Number -> "cell_open_${value.number}.png"
+                is CellValue.None -> GameIcons.cellOpen
+                is CellValue.Mine -> GameIcons.cellOpenMine
+                is CellValue.Number -> GameIcons.cellOpen(value.number)
             }
     }
 
