@@ -1,0 +1,33 @@
+name: Build and Publish
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+permissions:
+  contents: write
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - name: Build
+        run: ./gradlew wasmJsBrowserDistribution
+#        run: ./gradlew build
+
+      - name: Deploy browser app
+#        if: github.ref == 'refs/heads/master'
+        uses: JamesIves/github-pages-deploy-action@v4.5.0
+        with:
+          branch: gh-pages
+          folder: composeApp/build/dist/wasmJs/productionExecutable
+          clean: true
