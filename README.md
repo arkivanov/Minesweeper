@@ -16,3 +16,7 @@ Wasm browser app: https://arkivanov.github.io/Minesweeper
 Known issues:
 
 - The browser app recognizes all mouse buttons as left.
+
+Screenshots:
+
+![Desktop app](assets/desktop_app.png)
