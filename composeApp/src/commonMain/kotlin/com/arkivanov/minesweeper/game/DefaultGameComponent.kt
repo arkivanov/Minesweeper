@@ -9,11 +9,14 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 internal class DefaultGameComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
+    width: Int,
+    height: Int,
+    maxMines: Int,
 ) : GameComponent, ComponentContext by componentContext {
 
     private val store =
         instanceKeeper.getStore {
-            storeFactory.gameStore(newGameState(width = 10, height = 10, maxMines = 10))
+            storeFactory.gameStore(newGameState(width = width, height = height, maxMines = maxMines))
         }
 
     override val state: Value<State> = store.asValue()

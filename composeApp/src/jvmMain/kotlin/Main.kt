@@ -6,7 +6,7 @@ import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.lifecycle.LifecycleController
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.minesweeper.App
-import com.arkivanov.minesweeper.game.DefaultGameComponent
+import com.arkivanov.minesweeper.root.DefaultRootComponent
 import com.arkivanov.mvikotlin.timetravel.server.TimeTravelServer
 import com.arkivanov.mvikotlin.timetravel.store.TimeTravelStoreFactory
 import javax.swing.SwingUtilities
@@ -18,7 +18,7 @@ fun main() {
     val lifecycle = LifecycleRegistry()
 
     val root =
-        DefaultGameComponent(
+        DefaultRootComponent(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             storeFactory = TimeTravelStoreFactory(),
         )

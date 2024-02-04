@@ -4,7 +4,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.essenty.lifecycle.resume
 import com.arkivanov.minesweeper.App
-import com.arkivanov.minesweeper.game.DefaultGameComponent
+import com.arkivanov.minesweeper.root.DefaultRootComponent
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -12,12 +12,12 @@ fun main() {
     val lifecycle = LifecycleRegistry()
 
     val root =
-        DefaultGameComponent(
+        DefaultRootComponent(
             componentContext = DefaultComponentContext(lifecycle = lifecycle),
             storeFactory = DefaultStoreFactory(),
         )
 
     lifecycle.resume()
 
-    CanvasBasedWindow(canvasElementId = "ComposeTarget") { App(root ) }
+    CanvasBasedWindow(canvasElementId = "ComposeTarget") { App(root) }
 }
