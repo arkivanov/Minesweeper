@@ -23,3 +23,14 @@ internal inline fun Location.forEachAround(block: (Location) -> Unit) {
         }
     }
 }
+
+internal inline fun Location.countAdjacent(predicate: (Location) -> Boolean): Int {
+    var count = 0
+    forEachAdjacent {
+        if (predicate(it)) {
+            count++
+        }
+    }
+
+    return count
+}

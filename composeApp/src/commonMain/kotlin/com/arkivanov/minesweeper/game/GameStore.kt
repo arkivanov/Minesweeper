@@ -1,8 +1,16 @@
 package com.arkivanov.minesweeper.game
 
+import com.arkivanov.minesweeper.runUnless
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.core.store.create
+
+internal sealed interface Intent {
+    data class PressCell(val x: Int, val y: Int) : Intent
+    data class PressCells(val x: Int, val y: Int) : Intent
+    data class ReleaseCells(val x: Int, val y: Int) : Intent
+    data class ToggleFlag(val x: Int, val y: Int) : Intent
+}
 
 internal data class State(
     val grid: Grid,
@@ -10,6 +18,7 @@ internal data class State(
     val height: Int = grid.keys.maxOf { it.y } + 1,
     val maxMines: Int = grid.values.count { it.value.isMine },
     val gameStatus: GameStatus = GameStatus.INITIALIZED,
+    val pressMode: PressMode = PressMode.NONE,
 ) {
     init {
         require(grid.size == width * height) { "Grid size must be equal to width * height" }
@@ -21,6 +30,21 @@ internal enum class GameStatus {
     STARTED,
     FINISHED,
 }
+
+internal enum class PressMode {
+    NONE,
+    SINGLE,
+    MULTIPLE,
+}
+
+private val GameStatus.isOver: Boolean
+    get() =
+        when (this) {
+            GameStatus.INITIALIZED,
+            GameStatus.STARTED -> false
+
+            GameStatus.FINISHED -> true
+        }
 
 internal typealias Grid = Map<Location, Cell>
 internal typealias MutableGrid = MutableMap<Location, Cell>
@@ -37,7 +61,11 @@ sealed interface CellValue {
 }
 
 sealed interface CellStatus {
-    data class Closed(val isFlagged: Boolean = false) : CellStatus
+    data class Closed(
+        val isFlagged: Boolean = false,
+        val isPressed: Boolean = false,
+    ) : CellStatus
+
     data object Open : CellStatus
 }
 
@@ -48,19 +76,19 @@ internal val CellValue.isMine: Boolean
     get() = this is CellValue.Mine
 
 internal val CellValue.isNumber: Boolean
-    get() = this is CellValue.Number
+    get() = asNumber() != null
+
+internal fun CellValue.asNumber(): CellValue.Number? =
+    this as? CellValue.Number
 
 internal val CellStatus.isOpen: Boolean
     get() = this is CellStatus.Open
 
+internal val CellStatus.isFlagged: Boolean
+    get() = (this as? CellStatus.Closed)?.isFlagged == true
+
 private fun Cell.open(): Cell =
     copy(status = CellStatus.Open)
-
-internal sealed interface Intent {
-    data class RevealCell(val x: Int, val y: Int) : Intent
-    data class RevealCellsAround(val x: Int, val y: Int) : Intent
-    data class ToggleFlag(val x: Int, val y: Int) : Intent
-}
 
 internal fun StoreFactory.gameStore(state: State): Store<Intent, State, Nothing> =
     create(
@@ -88,10 +116,66 @@ private fun newBoard(width: Int, height: Int): Grid =
 
 private fun State.reduce(intent: Intent): State =
     when (intent) {
-        is Intent.RevealCell -> revealCell(location = intent.x by intent.y)
-        is Intent.RevealCellsAround -> revealCellsAround(location = intent.x by intent.y)
-        is Intent.ToggleFlag -> toggleFlag(location = intent.x by intent.y)
+        is Intent.PressCell -> pressCellIntent(location = intent.x by intent.y)
+        is Intent.PressCells -> pressCellsIntent(location = intent.x by intent.y)
+        is Intent.ReleaseCells -> releaseCellsIntent(location = intent.x by intent.y)
+        is Intent.ToggleFlag -> toggleFlagIntent(location = intent.x by intent.y)
     }
+
+private fun State.pressCellIntent(location: Location): State =
+    runUnless(gameStatus.isOver) {
+        releaseAllCells().pressCell(location = location)
+    }
+
+private fun State.pressCell(location: Location): State {
+    var cell = grid.getValue(location)
+    val status = cell.status as? CellStatus.Closed ?: return this
+    cell = cell.copy(status = status.copy(isPressed = true))
+
+    return copy(grid = grid + (location to cell), pressMode = PressMode.SINGLE)
+}
+
+private fun State.pressCellsIntent(location: Location): State =
+    runUnless(gameStatus.isOver) {
+        releaseAllCells().pressCells(location = location)
+    }
+
+private fun State.pressCells(location: Location): State {
+    val cells = ArrayList<Pair<Location, Cell>>()
+    location.forEachAround { loc ->
+        val cell = grid[loc] ?: return@forEachAround
+        val status = (cell.status as? CellStatus.Closed)?.takeUnless { it.isFlagged || it.isPressed } ?: return@forEachAround
+        cells += loc to cell.copy(status = status.copy(isPressed = true))
+    }
+
+    return copy(grid = grid + cells, pressMode = PressMode.MULTIPLE)
+}
+
+private fun State.releaseCellsIntent(location: Location): State =
+    runUnless(gameStatus.isOver) {
+        releaseAllCells().releaseCells(location = location)
+    }
+
+private fun State.releaseCells(location: Location): State =
+    when (pressMode) {
+        PressMode.NONE -> this
+        PressMode.SINGLE -> revealCell(location)
+        PressMode.MULTIPLE -> revealCellsAround(location)
+    }.copy(pressMode = PressMode.NONE)
+
+private fun State.releaseAllCells(): State {
+    val releasedCells =
+        grid.mapNotNull { (location, cell) ->
+            val status = cell.status
+            if ((status is CellStatus.Closed) && status.isPressed) {
+                location to cell.copy(status = status.copy(isPressed = false))
+            } else {
+                null
+            }
+        }
+
+    return copy(grid = grid + releasedCells)
+}
 
 private fun State.revealCell(location: Location): State =
     when (gameStatus) {
@@ -107,19 +191,18 @@ private fun State.start(clickLocation: Location): State =
     )
 
 private fun State.revealCells(centerLocation: Location): State {
-    if (gameStatus != GameStatus.STARTED) {
-        return this
-    }
-
     val cell = grid.getValue(centerLocation).takeUnless { it.status.isOpen } ?: return this
     val boardWithOpenCell = grid + (centerLocation to cell.open())
 
     return when (cell.value) {
-        is CellValue.None -> copy(grid = boardWithOpenCell.toMutableMap().apply { revealAdjacentCells(location = centerLocation) })
+        is CellValue.None -> copy(grid = boardWithOpenCell).revealAdjacentCells(location = centerLocation)
         is CellValue.Mine -> copy(grid = boardWithOpenCell, gameStatus = GameStatus.FINISHED)
         is CellValue.Number -> copy(grid = boardWithOpenCell)
     }
 }
+
+private fun State.revealAdjacentCells(location: Location): State =
+    copy(grid = grid.toMutableMap().apply { revealAdjacentCells(location = location) })
 
 private fun MutableGrid.revealAdjacentCells(location: Location, visited: MutableSet<Location> = HashSet()) {
     location.forEachAdjacent { loc ->
@@ -134,7 +217,7 @@ private fun MutableGrid.revealCell(location: Location, visited: MutableSet<Locat
         return false
     }
 
-    val cell = get(location)?.takeUnless { it.value.isMine || it.status.isOpen } ?: return false
+    val cell = get(location)?.takeUnless { it.value.isMine || it.status.isOpen || it.status.isFlagged } ?: return false
     set(location, cell.open())
     return cell.value.isNone
 }
@@ -166,59 +249,31 @@ private fun Grid.numbered(): Grid =
         }
     }
 
-private fun Grid.countAdjacentMines(location: Location): Int {
-    var count = 0
-
-    location.forEachAdjacent { loc ->
-        if (get(loc)?.value?.isMine == true) {
-            count++
-        }
-    }
-
-    return count
-}
+private fun Grid.countAdjacentMines(location: Location): Int =
+    location.countAdjacent { get(it)?.value?.isMine == true }
 
 private fun State.revealCellsAround(location: Location): State {
     if (gameStatus != GameStatus.STARTED) {
         return this
     }
 
-    val cell = grid.getValue(location)
-    val number = cell.value as? CellValue.Number ?: return this
+    val number = grid.getValue(location).takeIf { it.status.isOpen }?.value?.asNumber() ?: return this
+    val flagCount = location.countAdjacent { grid[it]?.status?.isFlagged == true }
 
-    var flagCount = 0
-    val locationsToReveal = ArrayList<Location>()
-    location.forEachAdjacent { loc ->
-        val c = grid[loc] ?: return@forEachAdjacent
-        val status = c.status
-        if (status is CellStatus.Closed) {
-            if (status.isFlagged) {
-                flagCount++
-            } else {
-                locationsToReveal += loc
-            }
-        }
+    return if (flagCount == number.number) {
+        revealAdjacentCells(location = location)
+    } else {
+        this
     }
-
-    if (flagCount != number.number) {
-        return this
-    }
-
-    var newState = this
-    locationsToReveal.forEach { loc ->
-        newState = newState.revealCells(centerLocation = loc)
-    }
-
-    return newState
 }
 
-private fun State.toggleFlag(location: Location): State {
-    if (gameStatus != GameStatus.STARTED) {
+private fun State.toggleFlagIntent(location: Location): State {
+    if (gameStatus.isOver) {
         return this
     }
 
     val cell = grid.getValue(location)
     val status = cell.status as? CellStatus.Closed ?: return this
 
-    return copy(grid = grid + (location to cell.copy(status = status.copy(isFlagged = true))))
+    return copy(grid = grid + (location to cell.copy(status = status.copy(isFlagged = !status.isFlagged))))
 }

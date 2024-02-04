@@ -1,5 +1,6 @@
 package com.arkivanov.minesweeper.game
 
+import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -27,10 +28,10 @@ class GameStoreTest {
     }
 
     @Test
-    fun GIVEN_created_WHEN_first_RevealCell_THEN_state_started() {
+    fun GIVEN_created_WHEN_first_click_on_cell_THEN_state_started() {
         val store = storeFactory.gameStore(newGameState(width = 10, height = 20, maxMines = 5))
 
-        store.accept(Intent.RevealCell(x = 5, y = 5))
+        store.click(x = 5, y = 5)
 
         assertEquals(GameStatus.STARTED, store.state.gameStatus)
         val grid = store.state.grid
@@ -45,7 +46,7 @@ class GameStoreTest {
     }
 
     @Test
-    fun WHEN_RevealCell_on_number_cell_THEN_cell_revealed() {
+    fun WHEN_click_on_number_cell_THEN_cell_revealed() {
         val store =
             storeFactory.gameStore(
                 State(
@@ -58,7 +59,7 @@ class GameStoreTest {
                 )
             )
 
-        store.accept(Intent.RevealCell(x = 1, y = 1))
+        store.click(x = 1, y = 1)
 
         assertEquals(
             grid(
@@ -71,7 +72,7 @@ class GameStoreTest {
     }
 
     @Test
-    fun WHEN_RevealCell_on_bottom_right_empty_cell_THEN_adjacent_cells_revealed() {
+    fun WHEN_click_on_bottom_right_empty_cell_THEN_adjacent_cells_revealed() {
         val store =
             storeFactory.gameStore(
                 State(
@@ -84,7 +85,7 @@ class GameStoreTest {
                 )
             )
 
-        store.accept(Intent.RevealCell(x = 2, y = 2))
+        store.click(x = 2, y = 2)
 
         assertEquals(
             grid(
@@ -97,7 +98,7 @@ class GameStoreTest {
     }
 
     @Test
-    fun WHEN_RevealCell_on_top_left_empty_cell_THEN_adjacent_cells_revealed() {
+    fun WHEN_click_on_top_left_empty_cell_THEN_adjacent_cells_revealed() {
         val store =
             storeFactory.gameStore(
                 State(
@@ -110,7 +111,7 @@ class GameStoreTest {
                 )
             )
 
-        store.accept(Intent.RevealCell(x = 0, y = 0))
+        store.click(x = 0, y = 0)
 
         assertEquals(
             grid(
@@ -123,7 +124,7 @@ class GameStoreTest {
     }
 
     @Test
-    fun WHEN_RevealCell_on_mine_cell_THEN_cell_revealed() {
+    fun WHEN_click_on_mine_cell_THEN_cell_revealed() {
         val store =
             storeFactory.gameStore(
                 State(
@@ -136,7 +137,7 @@ class GameStoreTest {
                 )
             )
 
-        store.accept(Intent.RevealCell(x = 0, y = 0))
+        store.click(x = 0, y = 0)
 
         assertEquals(
             grid(
@@ -149,7 +150,7 @@ class GameStoreTest {
     }
 
     @Test
-    fun WHEN_RevealCell_on_mine_cell_THEN_status_finished() {
+    fun WHEN_click_on_mine_cell_THEN_status_finished() {
         val store =
             storeFactory.gameStore(
                 State(
@@ -162,7 +163,7 @@ class GameStoreTest {
                 )
             )
 
-        store.accept(Intent.RevealCell(x = 0, y = 0))
+        store.click(x = 0, y = 0)
 
         assertEquals(GameStatus.FINISHED, store.state.gameStatus)
     }
@@ -219,6 +220,11 @@ class GameStoreTest {
             ),
             store.state.grid,
         )
+    }
+
+    private fun Store<Intent, *, *>.click(x: Int, y: Int) {
+        accept(Intent.PressCell(x = x, y = y))
+        accept(Intent.ReleaseCells(x = x, y = y))
     }
 
     private fun grid(vararg columns: Collection<Cell>): Grid =

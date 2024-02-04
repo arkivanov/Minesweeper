@@ -35,6 +35,7 @@ kotlin {
 
             implementation(libs.mvikotlin)
             implementation(libs.mvikotlin.main)
+            implementation(libs.mvikotlin.timetravel)
             implementation(libs.decompose)
             implementation(libs.decompose.extensions.compose)
         }

@@ -18,15 +18,19 @@ internal class DefaultGameComponent(
 
     override val state: Value<State> = store.asValue()
 
-    override fun onCellPrimaryAction(x: Int, y: Int) {
-        store.accept(Intent.RevealCell(x = x, y = y))
+    override fun onCellTouchedPrimary(x: Int, y: Int) {
+        store.accept(Intent.PressCell(x = x, y = y))
     }
 
-    override fun onCellSecondaryAction(x: Int, y: Int) {
+    override fun onCellPressedSecondary(x: Int, y: Int) {
         store.accept(Intent.ToggleFlag(x = x, y = y))
     }
 
-    override fun onCellTertiaryAction(x: Int, y: Int) {
-        store.accept(Intent.RevealCellsAround(x = x, y = y))
+    override fun onCellTouchedTertiary(x: Int, y: Int) {
+        store.accept(Intent.PressCells(x = x, y = y))
+    }
+
+    override fun onCellReleased(x: Int, y: Int) {
+        store.accept(Intent.ReleaseCells(x = x, y = y))
     }
 }

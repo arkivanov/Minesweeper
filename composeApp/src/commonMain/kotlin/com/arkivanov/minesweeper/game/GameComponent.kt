@@ -6,7 +6,8 @@ internal interface GameComponent {
 
     val state: Value<State>
 
-    fun onCellPrimaryAction(x: Int, y: Int)
-    fun onCellSecondaryAction(x: Int, y: Int)
-    fun onCellTertiaryAction(x: Int, y: Int)
+    fun onCellTouchedPrimary(x: Int, y: Int)
+    fun onCellPressedSecondary(x: Int, y: Int)
+    fun onCellTouchedTertiary(x: Int, y: Int)
+    fun onCellReleased(x: Int, y: Int)
 }
