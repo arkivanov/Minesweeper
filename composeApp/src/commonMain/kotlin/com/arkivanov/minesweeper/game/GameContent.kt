@@ -1,8 +1,7 @@
 package com.arkivanov.minesweeper.game
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,23 +10,24 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.changedToDown
 import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.isTertiaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 
-private val cellSize = 32.dp
+private val cellSize = 16.dp
 
 @Composable
 internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier) {
@@ -58,31 +58,33 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun CellContent(cell: Cell, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier.border(width = 1.dp, color = Color.Gray).then(
-            when (val status = cell.status) {
-                is CellStatus.Closed -> if (status.isPressed) Modifier else Modifier.background(Color.LightGray)
-                is CellStatus.Open -> Modifier
-            }
-        ),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = when (val status = cell.status) {
-                is CellStatus.Closed -> if (status.isFlagged) "?" else ""
-
-                is CellStatus.Open ->
-                    when (val value = cell.value) {
-                        is CellValue.None -> ""
-                        is CellValue.Mine -> "X"
-                        is CellValue.Number -> value.number.toString()
-                    }
-            },
-        )
-    }
+    Image(
+        painter = painterResource(cell.painterName()),
+        contentDescription = null,
+        modifier = modifier,
+        contentScale = ContentScale.FillBounds,
+    )
 }
+
+private fun Cell.painterName(): String =
+    when (status) {
+        is CellStatus.Closed ->
+            when {
+                status.isFlagged -> "cell_closed_flag.png"
+                status.isPressed -> "cell_open.png"
+                else -> "cell_closed.png"
+            }
+
+        is CellStatus.Open ->
+            when (value) {
+                is CellValue.None -> "cell_open.png"
+                is CellValue.Mine -> "cell_open_mine.png"
+                is CellValue.Number -> "cell_open_${value.number}.png"
+            }
+    }
 
 private fun Modifier.touchHandler(
     gridWidth: Int,
