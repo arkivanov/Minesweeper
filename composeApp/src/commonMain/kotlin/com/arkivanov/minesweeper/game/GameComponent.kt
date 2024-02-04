@@ -10,4 +10,5 @@ internal interface GameComponent {
     fun onCellPressedSecondary(x: Int, y: Int)
     fun onCellTouchedTertiary(x: Int, y: Int)
     fun onCellReleased(x: Int, y: Int)
+    fun onRestartClicked()
 }

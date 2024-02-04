@@ -33,4 +33,8 @@ internal class DefaultGameComponent(
     override fun onCellReleased(x: Int, y: Int) {
         store.accept(Intent.ReleaseCells(x = x, y = y))
     }
+
+    override fun onRestartClicked() {
+        store.accept(Intent.Restart)
+    }
 }

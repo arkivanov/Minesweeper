@@ -10,6 +10,7 @@ internal sealed interface Intent {
     data class PressCells(val x: Int, val y: Int) : Intent
     data class ReleaseCells(val x: Int, val y: Int) : Intent
     data class ToggleFlag(val x: Int, val y: Int) : Intent
+    data object Restart : Intent
 }
 
 internal data class State(
@@ -120,6 +121,7 @@ private fun State.reduce(intent: Intent): State =
         is Intent.PressCells -> pressCellsIntent(location = intent.x by intent.y)
         is Intent.ReleaseCells -> releaseCellsIntent(location = intent.x by intent.y)
         is Intent.ToggleFlag -> toggleFlagIntent(location = intent.x by intent.y)
+        is Intent.Restart -> newGameState(width = width, height = height, maxMines = maxMines)
     }
 
 private fun State.pressCellIntent(location: Location): State =

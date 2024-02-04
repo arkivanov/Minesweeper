@@ -2,16 +2,25 @@ package com.arkivanov.minesweeper.game
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.changedToDown
@@ -20,6 +29,7 @@ import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.isTertiaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
@@ -34,23 +44,33 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
     val state by component.state.subscribeAsState()
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        Row(
-            modifier = Modifier.touchHandler(
-                gridWidth = state.width,
-                gridHeight = state.height,
-                onPrimaryTouched = component::onCellTouchedPrimary,
-                onSecondaryPressed = component::onCellPressedSecondary,
-                onTertiaryTouched = component::onCellTouchedTertiary,
-                onReleased = component::onCellReleased,
-            ),
-        ) {
-            repeat(state.width) { x ->
-                Column(modifier = Modifier.width(cellSize)) {
-                    repeat(state.height) { y ->
-                        CellContent(
-                            cell = state.grid.getValue(x by y),
-                            modifier = Modifier.fillMaxWidth().height(cellSize),
-                        )
+        Column {
+            RestartButton(
+                isTrying = state.pressMode != PressMode.NONE,
+                onClick = component::onRestartClicked,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.touchHandler(
+                    gridWidth = state.width,
+                    gridHeight = state.height,
+                    onPrimaryTouched = component::onCellTouchedPrimary,
+                    onSecondaryPressed = component::onCellPressedSecondary,
+                    onTertiaryTouched = component::onCellTouchedTertiary,
+                    onReleased = component::onCellReleased,
+                ),
+            ) {
+                repeat(state.width) { x ->
+                    Column(modifier = Modifier.width(cellSize)) {
+                        repeat(state.height) { y ->
+                            CellContent(
+                                cell = state.grid.getValue(x by y),
+                                modifier = Modifier.fillMaxWidth().height(cellSize),
+                            )
+                        }
                     }
                 }
             }
@@ -67,6 +87,43 @@ private fun CellContent(cell: Cell, modifier: Modifier = Modifier) {
         modifier = modifier,
         contentScale = ContentScale.FillBounds,
     )
+}
+
+@Composable
+private fun RestartButton(
+    isTrying: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val smileInteractionSource = remember { MutableInteractionSource() }
+    var isPressed by remember { mutableStateOf(false) }
+
+    LaunchedEffect(smileInteractionSource) {
+        smileInteractionSource.interactions.collect { interaction ->
+            isPressed = interaction is PressInteraction.Press
+        }
+    }
+
+    @OptIn(ExperimentalResourceApi::class)
+    Image(
+        painter = painterResource(
+            when {
+                isPressed -> "smile_pressed.png"
+                isTrying -> "smile_trying.png"
+                else -> "smile_normal.png"
+            }
+        ),
+        contentDescription = "Restart",
+        modifier = modifier
+            .size(26.dp)
+            .clickable(
+                interactionSource = smileInteractionSource,
+                indication = null,
+                role = Role.Button,
+                onClick = onClick,
+            ),
+    )
+
 }
 
 private fun Cell.painterName(): String =
@@ -168,4 +225,5 @@ internal class PreviewGameComponent : GameComponent {
     override fun onCellPressedSecondary(x: Int, y: Int) {}
     override fun onCellTouchedTertiary(x: Int, y: Int) {}
     override fun onCellReleased(x: Int, y: Int) {}
+    override fun onRestartClicked() {}
 }
