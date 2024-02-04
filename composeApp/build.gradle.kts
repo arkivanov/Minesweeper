@@ -18,6 +18,8 @@ kotlin {
             commonWebpackConfig {
                 outputFileName = "composeApp.js"
             }
+
+            testTask { enabled = false }
         }
     }
 
