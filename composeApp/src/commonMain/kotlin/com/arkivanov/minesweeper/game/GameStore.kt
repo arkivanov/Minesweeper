@@ -173,7 +173,12 @@ private fun Grid.countAdjacentMines(location: Location): Int {
 }
 
 private fun State.toggleFlag(location: Location): State {
+    if (gameStatus != GameStatus.STARTED) {
+        return this
+    }
+
     val cell = grid.getValue(location)
     val status = cell.status as? CellStatus.Closed ?: return this
+
     return copy(grid = grid + (location to cell.copy(status = status.copy(isFlagged = true))))
 }

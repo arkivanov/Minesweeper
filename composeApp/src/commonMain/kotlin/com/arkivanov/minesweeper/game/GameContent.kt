@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.minesweeper.onClick
 
 private val cellSize = 32.dp
 
@@ -39,7 +40,10 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(cellSize)
-                                .clickable { component.onCellPrimaryAction(x = x, y = y) },
+                                .onClick(
+                                    onPrimaryClick = { component.onCellPrimaryAction(x = x, y = y) },
+                                    onSecondaryClick = { component.onCellSecondaryAction(x = x, y = y) },
+                                )
                         )
                     }
                 }
