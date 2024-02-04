@@ -29,7 +29,8 @@ internal data class State(
 internal enum class GameStatus {
     INITIALIZED,
     STARTED,
-    FINISHED,
+    WIN,
+    FAILED,
 }
 
 internal enum class PressMode {
@@ -44,7 +45,8 @@ private val GameStatus.isOver: Boolean
             GameStatus.INITIALIZED,
             GameStatus.STARTED -> false
 
-            GameStatus.FINISHED -> true
+            GameStatus.WIN,
+            GameStatus.FAILED -> true
         }
 
 internal typealias Grid = Map<Location, Cell>
@@ -81,6 +83,9 @@ internal val CellValue.isNumber: Boolean
 
 internal fun CellValue.asNumber(): CellValue.Number? =
     this as? CellValue.Number
+
+internal val CellStatus.isClosed: Boolean
+    get() = this is CellStatus.Closed
 
 internal val CellStatus.isOpen: Boolean
     get() = this is CellStatus.Open
@@ -122,6 +127,15 @@ private fun State.reduce(intent: Intent): State =
         is Intent.ReleaseCells -> releaseCellsIntent(location = intent.x by intent.y)
         is Intent.ToggleFlag -> toggleFlagIntent(location = intent.x by intent.y)
         is Intent.Restart -> newGameState(width = width, height = height, maxMines = maxMines)
+    }.finishIfNeeded()
+
+private fun State.finishIfNeeded(): State =
+    if (grid.values.any { it.value.isMine && it.status.isOpen }) {
+        copy(gameStatus = GameStatus.FAILED)
+    } else if (grid.values.count { it.status.isClosed } == maxMines) {
+        copy(gameStatus = GameStatus.WIN)
+    } else {
+        this
     }
 
 private fun State.pressCellIntent(location: Location): State =
@@ -181,9 +195,10 @@ private fun State.releaseAllCells(): State {
 
 private fun State.revealCell(location: Location): State =
     when (gameStatus) {
-        GameStatus.FINISHED -> this
         GameStatus.INITIALIZED -> start(clickLocation = location).revealCells(centerLocation = location)
         GameStatus.STARTED -> revealCells(centerLocation = location)
+        GameStatus.WIN,
+        GameStatus.FAILED -> this
     }
 
 private fun State.start(clickLocation: Location): State =
@@ -198,7 +213,7 @@ private fun State.revealCells(centerLocation: Location): State {
 
     return when (cell.value) {
         is CellValue.None -> copy(grid = boardWithOpenCell).revealAdjacentCells(location = centerLocation)
-        is CellValue.Mine -> copy(grid = boardWithOpenCell, gameStatus = GameStatus.FINISHED)
+        is CellValue.Mine,
         is CellValue.Number -> copy(grid = boardWithOpenCell)
     }
 }
@@ -219,7 +234,7 @@ private fun MutableGrid.revealCell(location: Location, visited: MutableSet<Locat
         return false
     }
 
-    val cell = get(location)?.takeUnless { it.value.isMine || it.status.isOpen || it.status.isFlagged } ?: return false
+    val cell = get(location)?.takeUnless { it.status.isOpen || it.status.isFlagged } ?: return false
     set(location, cell.open())
     return cell.value.isNone
 }

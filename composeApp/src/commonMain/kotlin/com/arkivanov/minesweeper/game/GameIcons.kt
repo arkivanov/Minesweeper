@@ -36,9 +36,9 @@ internal object GameIcons {
         @Composable
         get() = painterResource("smile_pressed.png")
 
-    val smileSuccess: Painter
+    val smileWin: Painter
         @Composable
-        get() = painterResource("smile_success.png")
+        get() = painterResource("smile_win.png")
 
     val smileTrying: Painter
         @Composable

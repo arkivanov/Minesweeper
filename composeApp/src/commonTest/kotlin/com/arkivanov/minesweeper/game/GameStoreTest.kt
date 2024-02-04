@@ -165,7 +165,7 @@ class GameStoreTest {
 
         store.click(x = 0, y = 0)
 
-        assertEquals(GameStatus.FINISHED, store.state.gameStatus)
+        assertEquals(GameStatus.FAILED, store.state.gameStatus)
     }
 
     @Test

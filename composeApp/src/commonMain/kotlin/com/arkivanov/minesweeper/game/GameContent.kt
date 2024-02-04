@@ -45,6 +45,8 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Column {
             RestartButton(
+                isWin = state.gameStatus == GameStatus.WIN,
+                isFailed = state.gameStatus == GameStatus.FAILED,
                 isTrying = state.pressMode != PressMode.NONE,
                 onClick = component::onRestartClicked,
                 modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -89,6 +91,8 @@ private fun CellContent(cell: Cell, modifier: Modifier = Modifier) {
 
 @Composable
 private fun RestartButton(
+    isWin: Boolean,
+    isFailed: Boolean,
     isTrying: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -104,7 +108,9 @@ private fun RestartButton(
 
     Image(
         painter = when {
+            isWin -> GameIcons.smileWin
             isPressed -> GameIcons.smilePressed
+            isFailed -> GameIcons.smileFailed
             isTrying -> GameIcons.smileTrying
             else -> GameIcons.smileNormal
         },
