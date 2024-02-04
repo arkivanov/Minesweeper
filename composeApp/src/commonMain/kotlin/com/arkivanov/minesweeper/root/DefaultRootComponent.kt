@@ -4,6 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.childContext
 import com.arkivanov.minesweeper.game.DefaultGameComponent
 import com.arkivanov.minesweeper.game.GameComponent
+import com.arkivanov.minesweeper.game.GameSettings
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 
 internal class DefaultRootComponent(
@@ -14,22 +15,14 @@ internal class DefaultRootComponent(
     override val gameComponent: GameComponent =
         gameComponentFactory(
             componentContext = childContext(key = "game"),
-            width = 10,
-            height = 10,
-            maxMines = 10,
+            settings = GameSettings(width = 20, height = 20, maxMines = 30),
         )
 }
 
 internal fun DefaultRootComponent(componentContext: ComponentContext, storeFactory: StoreFactory): DefaultRootComponent =
     DefaultRootComponent(
         componentContext = componentContext,
-        gameComponentFactory = { ctx, width, height, maxMines ->
-            DefaultGameComponent(
-                componentContext = ctx,
-                storeFactory = storeFactory,
-                width = width,
-                height = height,
-                maxMines = maxMines,
-            )
+        gameComponentFactory = { ctx, settings ->
+            DefaultGameComponent(componentContext = ctx, storeFactory = storeFactory, settings = settings)
         },
     )

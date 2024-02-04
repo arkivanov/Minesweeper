@@ -14,6 +14,6 @@ internal interface GameComponent {
     fun onRestartClicked()
 
     fun interface Factory {
-        operator fun invoke(componentContext: ComponentContext, width: Int, height: Int, maxMines: Int): GameComponent
+        operator fun invoke(componentContext: ComponentContext, settings: GameSettings): GameComponent
     }
 }
