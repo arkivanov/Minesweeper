@@ -255,9 +255,9 @@ internal fun GameContentPreview() {
 }
 
 internal class PreviewGameComponent : GameComponent {
-    override val state: Value<State> =
+    override val state: Value<GameState> =
         MutableValue(
-            State(
+            GameState(
                 grid = buildMap {
                     var number = 1
                     var isFlagged = false

@@ -15,15 +15,16 @@ internal class DefaultGameComponent(
     private val store =
         instanceKeeper.getStore {
             storeFactory.gameStore(
-                newGameState(
-                    width = settings.width,
-                    height = settings.height,
-                    maxMines = settings.maxMines,
-                )
+                state = stateKeeper.consume(key = KEY_SAVED_STATE, strategy = GameState.serializer())
+                    ?: newGameState(width = settings.width, height = settings.height, maxMines = settings.maxMines),
             )
         }
 
-    override val state: Value<State> = store.asValue()
+    override val state: Value<GameState> = store.asValue()
+
+    init {
+        stateKeeper.register(key = KEY_SAVED_STATE, strategy = GameState.serializer()) { store.state }
+    }
 
     override fun onCellTouchedPrimary(x: Int, y: Int) {
         store.accept(Intent.PressCell(x = x, y = y))
@@ -43,5 +44,9 @@ internal class DefaultGameComponent(
 
     override fun onRestartClicked() {
         store.accept(Intent.Restart)
+    }
+
+    private companion object {
+        private const val KEY_SAVED_STATE = "saved_state"
     }
 }

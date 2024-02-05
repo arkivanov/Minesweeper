@@ -8,6 +8,7 @@ Tech stack:
 - [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform) - declarative UI
 - [Decompose](https://github.com/arkivanov/Decompose) - navigation and lifecycle
 - [MVIKotlin](https://github.com/arkivanov/MVIKotlin) - state management
+- [kotlinx-serialization](https://github.com/Kotlin/kotlinx.serialization) - state saving and restoration
 
 Supported targets: Desktop (JVM) and Wasm Browser.
 

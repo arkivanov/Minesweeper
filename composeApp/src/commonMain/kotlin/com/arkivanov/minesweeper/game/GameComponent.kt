@@ -5,7 +5,7 @@ import com.arkivanov.decompose.value.Value
 
 internal interface GameComponent {
 
-    val state: Value<State>
+    val state: Value<GameState>
 
     fun onCellTouchedPrimary(x: Int, y: Int)
     fun onCellPressedSecondary(x: Int, y: Int)
