@@ -24,7 +24,8 @@ Controls:
 Known issues:
 
 - The browser app recognizes all mouse buttons as left.
-- The text fields in settings are not working in the browser app.
+- The cursor is not working in settings text fields in the browser app.
+- Cells may be misclicked in the browser app on mobile devices.
 
 Screenshots:
 
