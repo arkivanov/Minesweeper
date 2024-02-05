@@ -1,50 +1,49 @@
 package com.arkivanov.minesweeper.game
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocal
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.painter.Painter
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
+internal data class GameIcons(
+    val cellClosed: Painter,
+    val cellClosedFlag: Painter,
+    val cellOpen: Painter,
+    val cellOpenMine: Painter,
+    val cellOpenNumbers: Map<Int, Painter>,
+    val smileFailed: Painter,
+    val smileNormal: Painter,
+    val smilePressed: Painter,
+    val smileWin: Painter,
+    val smileTrying: Painter,
+)
+
 @OptIn(ExperimentalResourceApi::class)
-internal object GameIcons {
+@Composable
+internal fun gameIcons(): GameIcons =
+    GameIcons(
+        cellClosed = painterResource("cell_closed.png"),
+        cellClosedFlag = painterResource("cell_closed_flag.png"),
+        cellOpen = painterResource("cell_open.png"),
+        cellOpenMine = painterResource("cell_open_mine.png"),
+        cellOpenNumbers = buildMap {
+            for (i in 1..8) {
+                put(i, painterResource("cell_open_$i.png"))
+            }
+        },
+        smileFailed = painterResource("smile_failed.png"),
+        smileNormal = painterResource("smile_normal.png"),
+        smilePressed = painterResource("smile_pressed.png"),
+        smileWin = painterResource("smile_win.png"),
+        smileTrying = painterResource("smile_trying.png"),
+    )
 
-    val cellClosed: Painter
-        @Composable
-        get() = painterResource("cell_closed.png")
+internal val LocalGameIcons: ProvidableCompositionLocal<GameIcons?> =
+    compositionLocalOf { null }
 
-    val cellClosedFlag: Painter
-        @Composable
-        get() = painterResource("cell_closed_flag.png")
-
-    val cellOpen: Painter
-        @Composable
-        get() = painterResource("cell_open.png")
-
-    val cellOpenMine: Painter
-        @Composable
-        get() = painterResource("cell_open_mine.png")
-
-    val smileFailed: Painter
-        @Composable
-        get() = painterResource("smile_failed.png")
-
-    val smileNormal: Painter
-        @Composable
-        get() = painterResource("smile_normal.png")
-
-    val smilePressed: Painter
-        @Composable
-        get() = painterResource("smile_pressed.png")
-
-    val smileWin: Painter
-        @Composable
-        get() = painterResource("smile_win.png")
-
-    val smileTrying: Painter
-        @Composable
-        get() = painterResource("smile_trying.png")
-
+internal val CompositionLocal<GameIcons?>.icons: GameIcons
     @Composable
-    fun cellOpen(number: Int): Painter =
-        painterResource("cell_open_$number.png")
-}
+    get() = requireNotNull(current)
