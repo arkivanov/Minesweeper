@@ -13,98 +13,15 @@ internal sealed interface Intent {
     data object Restart : Intent
 }
 
-internal data class State(
-    val grid: Grid,
-    val width: Int = grid.keys.maxOf { it.x } + 1,
-    val height: Int = grid.keys.maxOf { it.y } + 1,
-    val maxMines: Int = grid.values.count { it.value.isMine },
-    val gameStatus: GameStatus = GameStatus.INITIALIZED,
-    val pressMode: PressMode = PressMode.NONE,
-) {
-    init {
-        require(grid.size == width * height) { "Grid size must be equal to width * height" }
-    }
-}
-
-internal enum class GameStatus {
-    INITIALIZED,
-    STARTED,
-    WIN,
-    FAILED,
-}
-
-internal enum class PressMode {
-    NONE,
-    SINGLE,
-    MULTIPLE,
-}
-
-private val GameStatus.isOver: Boolean
-    get() =
-        when (this) {
-            GameStatus.INITIALIZED,
-            GameStatus.STARTED -> false
-
-            GameStatus.WIN,
-            GameStatus.FAILED -> true
-        }
-
-internal typealias Grid = Map<Location, Cell>
-internal typealias MutableGrid = MutableMap<Location, Cell>
-
-internal data class Cell(
-    val value: CellValue = CellValue.None,
-    val status: CellStatus = CellStatus.Closed(),
-)
-
-sealed interface CellValue {
-    data object None : CellValue
-    data object Mine : CellValue
-    data class Number(val number: Int) : CellValue
-}
-
-sealed interface CellStatus {
-    data class Closed(
-        val isFlagged: Boolean = false,
-        val isPressed: Boolean = false,
-    ) : CellStatus
-
-    data object Open : CellStatus
-}
-
-internal val CellValue.isNone: Boolean
-    get() = this is CellValue.None
-
-internal val CellValue.isMine: Boolean
-    get() = this is CellValue.Mine
-
-internal val CellValue.isNumber: Boolean
-    get() = asNumber() != null
-
-internal fun CellValue.asNumber(): CellValue.Number? =
-    this as? CellValue.Number
-
-internal val CellStatus.isClosed: Boolean
-    get() = this is CellStatus.Closed
-
-internal val CellStatus.isOpen: Boolean
-    get() = this is CellStatus.Open
-
-internal val CellStatus.isFlagged: Boolean
-    get() = (this as? CellStatus.Closed)?.isFlagged == true
-
-private fun Cell.open(): Cell =
-    copy(status = CellStatus.Open)
-
-internal fun StoreFactory.gameStore(state: State): Store<Intent, State, Nothing> =
+internal fun StoreFactory.gameStore(state: GameState): Store<Intent, GameState, Nothing> =
     create(
         name = "GameStore",
         initialState = state,
         reducer = { reduce(it) },
     )
 
-internal fun newGameState(width: Int, height: Int, maxMines: Int): State =
-    State(
+internal fun newGameState(width: Int, height: Int, maxMines: Int): GameState =
+    GameState(
         width = width,
         height = height,
         maxMines = maxMines,
@@ -120,7 +37,7 @@ private fun newBoard(width: Int, height: Int): Grid =
         }
     }
 
-private fun State.reduce(intent: Intent): State =
+private fun GameState.reduce(intent: Intent): GameState =
     when (intent) {
         is Intent.PressCell -> pressCellIntent(location = intent.x by intent.y)
         is Intent.PressCells -> pressCellsIntent(location = intent.x by intent.y)
@@ -129,7 +46,7 @@ private fun State.reduce(intent: Intent): State =
         is Intent.Restart -> newGameState(width = width, height = height, maxMines = maxMines)
     }.finishIfNeeded()
 
-private fun State.finishIfNeeded(): State =
+private fun GameState.finishIfNeeded(): GameState =
     if (grid.values.any { it.value.isMine && it.status.isOpen }) {
         copy(gameStatus = GameStatus.FAILED)
     } else if (grid.values.count { it.status.isClosed } == maxMines) {
@@ -138,12 +55,12 @@ private fun State.finishIfNeeded(): State =
         this
     }
 
-private fun State.pressCellIntent(location: Location): State =
+private fun GameState.pressCellIntent(location: Location): GameState =
     runUnless(gameStatus.isOver) {
         releaseAllCells().pressCell(location = location)
     }
 
-private fun State.pressCell(location: Location): State {
+private fun GameState.pressCell(location: Location): GameState {
     var cell = grid.getValue(location)
     val status = cell.status as? CellStatus.Closed ?: return this
     cell = cell.copy(status = status.copy(isPressed = true))
@@ -151,12 +68,12 @@ private fun State.pressCell(location: Location): State {
     return copy(grid = grid + (location to cell), pressMode = PressMode.SINGLE)
 }
 
-private fun State.pressCellsIntent(location: Location): State =
+private fun GameState.pressCellsIntent(location: Location): GameState =
     runUnless(gameStatus.isOver) {
         releaseAllCells().pressCells(location = location)
     }
 
-private fun State.pressCells(location: Location): State {
+private fun GameState.pressCells(location: Location): GameState {
     val cells = ArrayList<Pair<Location, Cell>>()
     location.forEachAround { loc ->
         val cell = grid[loc] ?: return@forEachAround
@@ -167,19 +84,19 @@ private fun State.pressCells(location: Location): State {
     return copy(grid = grid + cells, pressMode = PressMode.MULTIPLE)
 }
 
-private fun State.releaseCellsIntent(location: Location): State =
+private fun GameState.releaseCellsIntent(location: Location): GameState =
     runUnless(gameStatus.isOver) {
         releaseAllCells().releaseCells(location = location)
     }
 
-private fun State.releaseCells(location: Location): State =
+private fun GameState.releaseCells(location: Location): GameState =
     when (pressMode) {
         PressMode.NONE -> this
         PressMode.SINGLE -> revealCell(location)
         PressMode.MULTIPLE -> revealCellsAround(location)
     }.copy(pressMode = PressMode.NONE)
 
-private fun State.releaseAllCells(): State {
+private fun GameState.releaseAllCells(): GameState {
     val releasedCells =
         grid.mapNotNull { (location, cell) ->
             val status = cell.status
@@ -193,7 +110,7 @@ private fun State.releaseAllCells(): State {
     return copy(grid = grid + releasedCells)
 }
 
-private fun State.revealCell(location: Location): State =
+private fun GameState.revealCell(location: Location): GameState =
     when (gameStatus) {
         GameStatus.INITIALIZED -> start(clickLocation = location).revealCells(centerLocation = location)
         GameStatus.STARTED -> revealCells(centerLocation = location)
@@ -201,13 +118,13 @@ private fun State.revealCell(location: Location): State =
         GameStatus.FAILED -> this
     }
 
-private fun State.start(clickLocation: Location): State =
+private fun GameState.start(clickLocation: Location): GameState =
     copy(
         grid = grid.planted(count = maxMines, clickLocation = clickLocation).numbered(),
         gameStatus = GameStatus.STARTED,
     )
 
-private fun State.revealCells(centerLocation: Location): State {
+private fun GameState.revealCells(centerLocation: Location): GameState {
     val cell = grid.getValue(centerLocation).takeUnless { it.status.isOpen } ?: return this
     val boardWithOpenCell = grid + (centerLocation to cell.open())
 
@@ -218,7 +135,7 @@ private fun State.revealCells(centerLocation: Location): State {
     }
 }
 
-private fun State.revealAdjacentCells(location: Location): State =
+private fun GameState.revealAdjacentCells(location: Location): GameState =
     copy(grid = grid.toMutableMap().apply { revealAdjacentCells(location = location) })
 
 private fun MutableGrid.revealAdjacentCells(location: Location, visited: MutableSet<Location> = HashSet()) {
@@ -269,7 +186,7 @@ private fun Grid.numbered(): Grid =
 private fun Grid.countAdjacentMines(location: Location): Int =
     location.countAdjacent { get(it)?.value?.isMine == true }
 
-private fun State.revealCellsAround(location: Location): State {
+private fun GameState.revealCellsAround(location: Location): GameState {
     if (gameStatus != GameStatus.STARTED) {
         return this
     }
@@ -284,7 +201,7 @@ private fun State.revealCellsAround(location: Location): State {
     }
 }
 
-private fun State.toggleFlagIntent(location: Location): State {
+private fun GameState.toggleFlagIntent(location: Location): GameState {
     if (gameStatus.isOver) {
         return this
     }

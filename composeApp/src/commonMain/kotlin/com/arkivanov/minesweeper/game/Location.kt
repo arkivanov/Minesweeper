@@ -1,5 +1,8 @@
 package com.arkivanov.minesweeper.game
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 internal data class Location(
     val x: Int,
     val y: Int,

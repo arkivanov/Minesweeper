@@ -40,6 +40,7 @@ kotlin {
             implementation(libs.mvikotlin.timetravel)
             implementation(libs.decompose)
             implementation(libs.decompose.extensions.compose)
+            implementation(libs.serialization.json)
         }
 
         commonTest.dependencies {

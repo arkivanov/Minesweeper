@@ -49,7 +49,7 @@ class GameStoreTest {
     fun WHEN_click_on_number_cell_THEN_cell_revealed() {
         val store =
             storeFactory.gameStore(
-                State(
+                GameState(
                     grid = grid(
                         listOf(mineClosed(), numberOpen(number = 1), noneClosed()),
                         listOf(numberClosed(number = 1), numberOpen(number = 1), noneClosed()),
@@ -75,7 +75,7 @@ class GameStoreTest {
     fun WHEN_click_on_bottom_right_empty_cell_THEN_adjacent_cells_revealed() {
         val store =
             storeFactory.gameStore(
-                State(
+                GameState(
                     grid = grid(
                         listOf(mineClosed(), numberOpen(number = 1), noneClosed()),
                         listOf(numberClosed(number = 1), numberClosed(number = 1), noneClosed()),
@@ -101,7 +101,7 @@ class GameStoreTest {
     fun WHEN_click_on_top_left_empty_cell_THEN_adjacent_cells_revealed() {
         val store =
             storeFactory.gameStore(
-                State(
+                GameState(
                     grid = grid(
                         listOf(noneClosed(), noneClosed(), noneClosed()),
                         listOf(noneClosed(), numberClosed(number = 1), numberClosed(number = 1)),
@@ -127,7 +127,7 @@ class GameStoreTest {
     fun WHEN_click_on_mine_cell_THEN_cell_revealed() {
         val store =
             storeFactory.gameStore(
-                State(
+                GameState(
                     grid = grid(
                         listOf(mineClosed(), numberOpen(number = 1), noneClosed()),
                         listOf(numberClosed(number = 1), numberOpen(number = 1), noneClosed()),
@@ -153,7 +153,7 @@ class GameStoreTest {
     fun WHEN_click_on_mine_cell_THEN_status_finished() {
         val store =
             storeFactory.gameStore(
-                State(
+                GameState(
                     grid = grid(
                         listOf(mineClosed(), numberOpen(number = 1), noneClosed()),
                         listOf(numberClosed(number = 1), numberOpen(number = 1), noneClosed()),
@@ -172,7 +172,7 @@ class GameStoreTest {
     fun WHEN_ToggleFlag_on_closed_cell_THEN_cell_flagged() {
         val store =
             storeFactory.gameStore(
-                State(
+                GameState(
                     grid = grid(
                         listOf(mineClosed(), numberClosed(number = 1), noneClosed()),
                         listOf(mineClosed(), numberClosed(number = 1), noneClosed()),
@@ -199,7 +199,7 @@ class GameStoreTest {
     fun WHEN_ToggleFlag_on_open_cell_THEN_noop() {
         val store =
             storeFactory.gameStore(
-                State(
+                GameState(
                     grid = grid(
                         listOf(mineOpen(), numberOpen(number = 1), noneOpen()),
                         listOf(mineOpen(), numberOpen(number = 1), noneOpen()),
