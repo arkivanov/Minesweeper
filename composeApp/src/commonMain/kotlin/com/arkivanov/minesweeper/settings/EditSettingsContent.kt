@@ -31,30 +31,33 @@ internal fun EditSettingsContent(component: EditSettingsComponent) {
                     value = model.width,
                     onValueChange = component::onWidthChanged,
                     label = { Text(text = "Width") },
+                    singleLine = true,
                 )
 
                 TextField(
                     value = model.height,
                     onValueChange = component::onHeightChanged,
                     label = { Text(text = "Height") },
+                    singleLine = true,
                 )
 
                 TextField(
                     value = model.maxMines,
                     onValueChange = component::onMaxMinesChanged,
                     label = { Text(text = "Mine count") },
+                    singleLine = true,
                 )
 
                 Row(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
-                    Button(onClick = component::onConfirmClicked) {
-                        Text(text = "Apply")
+                    Button(onClick = component::onDismissRequested) {
+                        Text(text = "Cancel")
                     }
 
                     Button(onClick = component::onConfirmClicked) {
-                        Text(text = "Cancel")
+                        Text(text = "Apply")
                     }
                 }
             }

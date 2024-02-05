@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.minesweeper.game.GameContent
@@ -35,7 +36,9 @@ internal fun RootContent(component: RootComponent) {
                 },
             )
 
-            GameContent(component = gameComponent, modifier = Modifier.fillMaxSize())
+            key(gameComponent) {
+                GameContent(component = gameComponent, modifier = Modifier.fillMaxSize())
+            }
         }
 
         editSettingsComponentSlot.child?.instance?.also { editSettingsComponent ->
