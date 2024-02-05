@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -42,6 +44,7 @@ import androidx.compose.ui.input.pointer.isTertiaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
@@ -60,13 +63,12 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
 
     CompositionLocalProvider(LocalGameIcons provides gameIcons()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
-            Column {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 RestartButton(
                     isWin = gameStatus == GameStatus.WIN,
                     isFailed = gameStatus == GameStatus.FAILED,
                     isTrying = pressMode != PressMode.NONE,
                     onClick = component::onRestartClicked,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -92,6 +94,10 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                ControlsInfo()
             }
         }
     }
@@ -142,6 +148,26 @@ private fun RestartButton(
                 onClick = onClick,
             ),
     )
+}
+
+@Composable
+private fun ControlsInfo(modifier: Modifier = Modifier) {
+    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "Left click: ", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.body2)
+            Text(text = "dig a cell", style = MaterialTheme.typography.body2)
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "Right click (or Ctrl + Left click): ", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.body2)
+            Text(text = "flag a cell", style = MaterialTheme.typography.body2)
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "Middle click (or Left + Right click, or Shift + Left click): ", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.body2)
+            Text(text = "dig all adjacent cells", style = MaterialTheme.typography.body2)
+        }
+    }
 }
 
 @Composable
