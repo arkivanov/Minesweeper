@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,36 +43,43 @@ private val cellSize = 16.dp
 @Composable
 internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier) {
     val state by component.state.subscribeAsState()
+    val gameStatus by derivedStateOf { state.gameStatus }
+    val pressMode by derivedStateOf { state.pressMode }
+    val gridWidth by derivedStateOf { state.width }
+    val gridHeight by derivedStateOf { state.height }
+    val grid by derivedStateOf { state.grid }
 
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        Column {
-            RestartButton(
-                isWin = state.gameStatus == GameStatus.WIN,
-                isFailed = state.gameStatus == GameStatus.FAILED,
-                isTrying = state.pressMode != PressMode.NONE,
-                onClick = component::onRestartClicked,
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-            )
+    CompositionLocalProvider(LocalGameIcons provides gameIcons()) {
+        Box(modifier = modifier, contentAlignment = Alignment.Center) {
+            Column {
+                RestartButton(
+                    isWin = gameStatus == GameStatus.WIN,
+                    isFailed = gameStatus == GameStatus.FAILED,
+                    isTrying = pressMode != PressMode.NONE,
+                    onClick = component::onRestartClicked,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Row(
-                modifier = Modifier.touchHandler(
-                    gridWidth = state.width,
-                    gridHeight = state.height,
-                    onPrimaryTouched = component::onCellTouchedPrimary,
-                    onSecondaryPressed = component::onCellPressedSecondary,
-                    onTertiaryTouched = component::onCellTouchedTertiary,
-                    onReleased = component::onCellReleased,
-                ),
-            ) {
-                repeat(state.width) { x ->
-                    Column(modifier = Modifier.width(cellSize)) {
-                        repeat(state.height) { y ->
-                            CellContent(
-                                cell = state.grid.getValue(x by y),
-                                modifier = Modifier.fillMaxWidth().height(cellSize),
-                            )
+                Row(
+                    modifier = Modifier.touchHandler(
+                        gridWidth = gridWidth,
+                        gridHeight = gridHeight,
+                        onPrimaryTouched = component::onCellTouchedPrimary,
+                        onSecondaryPressed = component::onCellPressedSecondary,
+                        onTertiaryTouched = component::onCellTouchedTertiary,
+                        onReleased = component::onCellReleased,
+                    ),
+                ) {
+                    repeat(gridWidth) { x ->
+                        Column(modifier = Modifier.width(cellSize)) {
+                            repeat(gridHeight) { y ->
+                                CellContent(
+                                    cell = grid.getValue(x by y),
+                                    modifier = Modifier.fillMaxWidth().height(cellSize),
+                                )
+                            }
                         }
                     }
                 }
@@ -108,11 +117,11 @@ private fun RestartButton(
 
     Image(
         painter = when {
-            isWin -> GameIcons.smileWin
-            isPressed -> GameIcons.smilePressed
-            isFailed -> GameIcons.smileFailed
-            isTrying -> GameIcons.smileTrying
-            else -> GameIcons.smileNormal
+            isWin -> LocalGameIcons.icons.smileWin
+            isPressed -> LocalGameIcons.icons.smilePressed
+            isFailed -> LocalGameIcons.icons.smileFailed
+            isTrying -> LocalGameIcons.icons.smileTrying
+            else -> LocalGameIcons.icons.smileNormal
         },
         contentDescription = "Restart",
         modifier = modifier
@@ -124,7 +133,6 @@ private fun RestartButton(
                 onClick = onClick,
             ),
     )
-
 }
 
 @Composable
@@ -132,16 +140,16 @@ private fun Cell.painter(): Painter =
     when (status) {
         is CellStatus.Closed ->
             when {
-                status.isFlagged -> GameIcons.cellClosedFlag
-                status.isPressed -> GameIcons.cellOpen
-                else -> GameIcons.cellClosed
+                status.isFlagged -> LocalGameIcons.icons.cellClosedFlag
+                status.isPressed -> LocalGameIcons.icons.cellOpen
+                else -> LocalGameIcons.icons.cellClosed
             }
 
         is CellStatus.Open ->
             when (value) {
-                is CellValue.None -> GameIcons.cellOpen
-                is CellValue.Mine -> GameIcons.cellOpenMine
-                is CellValue.Number -> GameIcons.cellOpen(value.number)
+                is CellValue.None -> LocalGameIcons.icons.cellOpen
+                is CellValue.Mine -> LocalGameIcons.icons.cellOpenMine
+                is CellValue.Number -> LocalGameIcons.icons.cellOpenNumbers.getValue(value.number)
             }
     }
 
