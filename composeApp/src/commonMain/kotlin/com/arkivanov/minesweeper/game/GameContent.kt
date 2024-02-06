@@ -37,6 +37,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.changedToDown
 import androidx.compose.ui.input.pointer.isPrimaryPressed
 import androidx.compose.ui.input.pointer.isSecondaryPressed
@@ -154,17 +155,32 @@ private fun RestartButton(
 private fun ControlsInfo(modifier: Modifier = Modifier) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Left click: ", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.body2)
+            Text(
+                text = "Left click: ",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.body2,
+            )
+
             Text(text = "dig a cell", style = MaterialTheme.typography.body2)
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Right click (or Ctrl + Left click): ", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.body2)
+            Text(
+                text = "Right click (or Ctrl + Left click): ",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.body2,
+            )
+
             Text(text = "flag a cell", style = MaterialTheme.typography.body2)
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Middle click (or Left + Right click, or Shift + Left click): ", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.body2)
+            Text(
+                text = "Middle click (or Left + Right click, or Shift + Left click): ",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.body2,
+            )
+
             Text(text = "dig all adjacent cells", style = MaterialTheme.typography.body2)
         }
     }
@@ -212,7 +228,7 @@ private fun Modifier.touchHandler(
                     val offset = change.position
                     val cellX = (offset.x / cellWidth).toInt().coerceIn(0 until gridWidth)
                     val cellY = (offset.y / cellHeight).toInt().coerceIn(0 until gridHeight)
-                    val isDown = change.changedToDown()
+                    val isChangedToDown = change.changedToDown()
                     val isPrimaryPressed = event.buttons.isPrimaryPressed
                     val isSecondaryPressed = event.buttons.isSecondaryPressed
                     val isTertiaryPressed = event.buttons.isTertiaryPressed
@@ -223,16 +239,22 @@ private fun Modifier.touchHandler(
 
                     focusRequester.requestFocus()
 
-                    if (change.pressed) {
-                        when {
-                            isPrimary && isDown && isCtrlPressed -> onSecondaryPressed(cellX, cellY)
-                            isPrimary && isShiftPressed -> onTertiaryTouched(cellX, cellY)
-                            isPrimary -> onPrimaryTouched(cellX, cellY)
-                            isSecondary && isDown -> onSecondaryPressed(cellX, cellY)
-                            isTertiary || isPrimaryAndSecondary -> onTertiaryTouched(cellX, cellY)
-                        }
-                    } else {
+                    if (!change.pressed || (event.type == PointerEventType.Release)) {
                         onReleased(cellX, cellY)
+                    } else if (isCtrlPressed) {
+                        if ((isPrimary || isSecondary) && isChangedToDown) {
+                            onSecondaryPressed(cellX, cellY)
+                        }
+                    } else if (isShiftPressed) {
+                        if (isPrimary) {
+                            onTertiaryTouched(cellX, cellY)
+                        }
+                    } else if (isPrimary) {
+                        onPrimaryTouched(cellX, cellY)
+                    } else if (isSecondary && isChangedToDown) {
+                        onSecondaryPressed(cellX, cellY)
+                    } else if (isTertiary || isPrimaryAndSecondary) {
+                        onTertiaryTouched(cellX, cellY)
                     }
                 }
             }
