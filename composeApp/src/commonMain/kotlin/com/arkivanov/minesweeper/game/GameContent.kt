@@ -7,7 +7,16 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -53,10 +62,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
     val gridWidth by derivedStateOf { state.width }
     val gridHeight by derivedStateOf { state.height }
     val grid by derivedStateOf { state.grid }
-
-    val remainingBombs by derivedStateOf {
-        state.maxMines - grid.values.count { it.status.isFlagged }
-    }
+    val remainingBombs by derivedStateOf { state.remainingMines }
 
     CompositionLocalProvider(LocalGameIcons provides gameIcons()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
@@ -64,7 +70,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(
-                        40.dp,
+                        space = 40.dp,
                         alignment = Alignment.CenterHorizontally
                     )
                 ) {
@@ -100,9 +106,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                             repeat(gridHeight) { y ->
                                 CellContent(
                                     cell = grid.getValue(x by y),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(cellSize),
+                                    modifier = Modifier.fillMaxWidth().height(cellSize),
                                 )
                             }
                         }

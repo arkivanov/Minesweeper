@@ -97,3 +97,6 @@ internal val CellStatus.isFlagged: Boolean
 
 internal fun Cell.open(): Cell =
     copy(status = CellStatus.Open)
+
+internal val GameState.remainingMines: Int
+    get() = (maxMines - grid.values.count { it.status.isFlagged })
