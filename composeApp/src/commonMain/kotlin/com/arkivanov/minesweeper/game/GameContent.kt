@@ -63,7 +63,10 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.spacedBy(
+                        40.dp,
+                        alignment = Alignment.CenterHorizontally
+                    )
                 ) {
                     Text(
                         text = "$remainingBombs",
@@ -76,6 +79,8 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                         isTrying = pressMode != PressMode.NONE,
                         onClick = component::onRestartClicked,
                     )
+
+                    // TODO: Place for stopwatch - next iteration
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
