@@ -30,7 +30,12 @@ internal class DefaultRootComponent(
             source = gameNav,
             serializer = GameSettings.serializer(),
             initialConfiguration = { settings },
-            childFactory = { settings, ctx -> gameComponentFactory(componentContext = ctx, settings = settings) },
+            childFactory = { settings, ctx ->
+                gameComponentFactory(
+                    componentContext = ctx,
+                    settings = settings
+                )
+            },
         )
 
     private val editSettingsNav = SlotNavigation<GameSettings>()
@@ -56,11 +61,17 @@ internal class DefaultRootComponent(
     }
 }
 
-internal fun DefaultRootComponent(componentContext: ComponentContext, storeFactory: StoreFactory): DefaultRootComponent =
-    DefaultRootComponent(
-        componentContext = componentContext,
-        gameComponentFactory = { ctx, settings ->
-            DefaultGameComponent(componentContext = ctx, storeFactory = storeFactory, settings = settings)
-        },
-        editSettingsComponentFactory = ::DefaultEditSettingsComponent,
-    )
+internal fun DefaultRootComponent(
+    componentContext: ComponentContext,
+    storeFactory: StoreFactory
+): DefaultRootComponent = DefaultRootComponent(
+    componentContext = componentContext,
+    gameComponentFactory = { ctx, settings ->
+        DefaultGameComponent(
+            componentContext = ctx,
+            storeFactory = storeFactory,
+            settings = settings
+        )
+    },
+    editSettingsComponentFactory = ::DefaultEditSettingsComponent,
+)
