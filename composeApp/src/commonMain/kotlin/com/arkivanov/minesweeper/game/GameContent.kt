@@ -47,6 +47,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
@@ -69,14 +70,13 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        space = 40.dp,
-                        alignment = Alignment.CenterHorizontally
-                    )
+                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Text(
                         text = "$remainingBombs",
-                        style = MaterialTheme.typography.body2
+                        style = MaterialTheme.typography.body2,
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center
                     )
 
                     RestartButton(
@@ -86,7 +86,12 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                         onClick = component::onRestartClicked,
                     )
 
-                    // TODO: Place for stopwatch - next iteration
+                    Text(
+                        text = "000", // TODO: Place for stopwatch
+                        style = MaterialTheme.typography.body2,
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
