@@ -37,7 +37,10 @@ internal fun RootContent(component: RootComponent) {
             )
 
             key(gameComponent) {
-                GameContent(component = gameComponent, modifier = Modifier.fillMaxSize())
+                GameContent(
+                    component = gameComponent,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
 
