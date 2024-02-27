@@ -12,9 +12,7 @@ internal data class GameState(
     val pressMode: PressMode = PressMode.NONE,
 ) {
     init {
-        require(grid.size == width * height) {
-            "Grid size must be equal to width * height"
-        }
+        require(grid.size == width * height) { "Grid size must be equal to width * height" }
     }
 }
 
