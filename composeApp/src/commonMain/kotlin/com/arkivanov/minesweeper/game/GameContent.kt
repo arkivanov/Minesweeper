@@ -7,15 +7,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -62,15 +54,29 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
     val gridHeight by derivedStateOf { state.height }
     val grid by derivedStateOf { state.grid }
 
+    val remainingBombs by derivedStateOf {
+        state.maxMines - grid.values.count { it.status.isFlagged }
+    }
+
     CompositionLocalProvider(LocalGameIcons provides gameIcons()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                RestartButton(
-                    isWin = gameStatus == GameStatus.WIN,
-                    isFailed = gameStatus == GameStatus.FAILED,
-                    isTrying = pressMode != PressMode.NONE,
-                    onClick = component::onRestartClicked,
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Text(
+                        text = "$remainingBombs",
+                        style = MaterialTheme.typography.body2
+                    )
+
+                    RestartButton(
+                        isWin = gameStatus == GameStatus.WIN,
+                        isFailed = gameStatus == GameStatus.FAILED,
+                        isTrying = pressMode != PressMode.NONE,
+                        onClick = component::onRestartClicked,
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -89,7 +95,9 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                             repeat(gridHeight) { y ->
                                 CellContent(
                                     cell = grid.getValue(x by y),
-                                    modifier = Modifier.fillMaxWidth().height(cellSize),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(cellSize),
                                 )
                             }
                         }
