@@ -20,6 +20,7 @@ internal data class GameIcons(
     val smilePressed: Painter,
     val smileWin: Painter,
     val smileTrying: Painter,
+    val digits: Map<Char, Painter>,
 )
 
 @OptIn(ExperimentalResourceApi::class)
@@ -40,6 +41,12 @@ internal fun gameIcons(): GameIcons =
         smilePressed = painterResource(DrawableResource("smile_pressed.png")),
         smileWin = painterResource(DrawableResource("smile_win.png")),
         smileTrying = painterResource(DrawableResource("smile_trying.png")),
+        digits = buildMap {
+            for (i in '0'..'9') {
+                put(i, painterResource(DrawableResource("digit_$i.png")))
+            }
+            put('-', painterResource(DrawableResource("digit_minus.png")))
+        },
     )
 
 internal val LocalGameIcons: ProvidableCompositionLocal<GameIcons?> =
