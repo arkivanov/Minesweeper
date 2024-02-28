@@ -66,7 +66,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
     val gridWidth by derivedStateOf { state.width }
     val gridHeight by derivedStateOf { state.height }
     val grid by derivedStateOf { state.grid }
-    val remainingBombs by derivedStateOf { state.remainingMines }
+    val remainingMines by derivedStateOf { state.remainingMines }
 
     CompositionLocalProvider(LocalGameIcons provides gameIcons()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
@@ -75,8 +75,8 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    RemainingBombs(
-                        remainingBombs = remainingBombs,
+                    RemainingMines(
+                        remainingMines = remainingMines,
                         modifier = Modifier.weight(1f),
                     )
 
@@ -132,16 +132,16 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
 }
 
 @Composable
-fun RemainingBombs(
-    remainingBombs: Int,
+fun RemainingMines(
+    remainingMines: Int,
     modifier: Modifier = Modifier,
 ) {
-    val bombsStringified = remainingBombs.toString()
-    val digits = bombsStringified.countValuebleChars()
+    val minesStringified = remainingMines.toString()
+    val digits = minesStringified.countValuebleChars()
     // TODO: Idea - When user isWin, make all ---, 000?
     Row(
         modifier = modifier.setContentDescription(
-            description = "Counter of remaining bombs",
+            description = "Counter of remaining mines",
             role = Role.Image
         ),
         horizontalArrangement = Arrangement.Center
@@ -157,7 +157,7 @@ fun RemainingBombs(
                 )
             }
         }
-        for (char in bombsStringified) {
+        for (char in minesStringified) {
             Image(
                 painter = LocalGameIcons.icons.digits.getValue(char),
                 contentDescription = char.toString(),
