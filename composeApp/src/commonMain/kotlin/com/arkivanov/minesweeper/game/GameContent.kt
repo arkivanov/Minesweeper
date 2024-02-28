@@ -52,8 +52,11 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.minesweeper.countValuebleChars
+import com.arkivanov.minesweeper.setContentDescription
 
 private val cellSize = 16.dp
+private const val defaultCountersSize = 3
 
 @Composable
 internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier) {
@@ -72,11 +75,9 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    Text(
-                        text = "$remainingBombs",
-                        style = MaterialTheme.typography.body2,
+                    RemainingBombs(
+                        remainingBombs = remainingBombs,
                         modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
                     )
 
                     RestartButton(
@@ -84,6 +85,10 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                         isFailed = gameStatus == GameStatus.FAILED,
                         isTrying = pressMode != PressMode.NONE,
                         onClick = component::onRestartClicked,
+                    )
+
+                    Stopwatch(
+
                     )
 
                     Text(
@@ -122,6 +127,43 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
 
                 ControlsInfo()
             }
+        }
+    }
+}
+
+@Composable
+fun RemainingBombs(
+    remainingBombs: Int,
+    modifier: Modifier = Modifier,
+) {
+    val bombsStringified = remainingBombs.toString()
+    val digits = bombsStringified.countValuebleChars()
+    // TODO: Idea - When user isWin, make all ---, 000?
+    Row(
+        modifier = modifier.setContentDescription(
+            description = "Counter of remaining bombs",
+            role = Role.Image
+        ),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        val zeroesToDrawOnTheRightSide = defaultCountersSize - digits
+        if (zeroesToDrawOnTheRightSide > 0) {
+            for (i in 0 until zeroesToDrawOnTheRightSide) {
+                Image(
+                    painter = LocalGameIcons.icons.digits.getValue('0'),
+                    contentDescription = "0",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.height(26.dp),
+                )
+            }
+        }
+        for (char in bombsStringified) {
+            Image(
+                painter = LocalGameIcons.icons.digits.getValue(char),
+                contentDescription = char.toString(),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.height(26.dp),
+            )
         }
     }
 }
@@ -171,6 +213,11 @@ private fun RestartButton(
                 onClick = onClick,
             ),
     )
+}
+
+@Composable
+fun Stopwatch() {
+    // TODO: Implement stopwatch feature
 }
 
 @Composable

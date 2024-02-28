@@ -21,3 +21,5 @@ internal inline fun <T> T.runUnless(condition: Boolean, block: T.() -> T): T =
     } else {
         block()
     }
+
+internal fun CharSequence.countValuebleChars(): Int = count { it in "0123456789-" }
