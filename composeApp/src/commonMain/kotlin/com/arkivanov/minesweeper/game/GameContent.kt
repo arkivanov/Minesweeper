@@ -7,6 +7,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,6 +47,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
@@ -61,16 +63,36 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
     val gridWidth by derivedStateOf { state.width }
     val gridHeight by derivedStateOf { state.height }
     val grid by derivedStateOf { state.grid }
+    val remainingBombs by derivedStateOf { state.remainingMines }
 
     CompositionLocalProvider(LocalGameIcons provides gameIcons()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                RestartButton(
-                    isWin = gameStatus == GameStatus.WIN,
-                    isFailed = gameStatus == GameStatus.FAILED,
-                    isTrying = pressMode != PressMode.NONE,
-                    onClick = component::onRestartClicked,
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    Text(
+                        text = "$remainingBombs",
+                        style = MaterialTheme.typography.body2,
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center
+                    )
+
+                    RestartButton(
+                        isWin = gameStatus == GameStatus.WIN,
+                        isFailed = gameStatus == GameStatus.FAILED,
+                        isTrying = pressMode != PressMode.NONE,
+                        onClick = component::onRestartClicked,
+                    )
+
+                    Text(
+                        text = "000", // TODO: Place for stopwatch
+                        style = MaterialTheme.typography.body2,
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
