@@ -53,10 +53,11 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.minesweeper.countValuebleChars
-import com.arkivanov.minesweeper.setContentDescription
+import com.arkivanov.minesweeper.setSemantics
+import kotlin.math.absoluteValue
 
 private val cellSize = 16.dp
-private const val defaultCountersSize = 3
+private const val COUNTER_LENGTH = 3
 
 @Composable
 internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier) {
@@ -75,8 +76,10 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    RemainingMines(
-                        remainingMines = remainingMines,
+                    // TODO: Doesn't know how to use it right, just Counter,
+                    //       or create composable function RemainingMines, and use counter there
+                    Counter(
+                        value = remainingMines,
                         modifier = Modifier.weight(1f),
                     )
 
@@ -87,16 +90,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                         onClick = component::onRestartClicked,
                     )
 
-                    Stopwatch(
-
-                    )
-
-                    Text(
-                        text = "000", // TODO: Place for stopwatch
-                        style = MaterialTheme.typography.body2,
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
-                    )
+                    Stopwatch(modifier = Modifier.weight(1f))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -132,41 +126,24 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
 }
 
 @Composable
-fun RemainingMines(
-    remainingMines: Int,
-    modifier: Modifier = Modifier,
-) {
-    val minesStringified = remainingMines.toString()
-    val digits = minesStringified.countValuebleChars()
-    // TODO: Idea - When user isWin, make all ---, 000?
-    Row(
-        modifier = modifier.setContentDescription(
-            description = "Counter of remaining mines",
-            role = Role.Image
-        ),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        val zeroesToDrawOnTheRightSide = defaultCountersSize - digits
-        if (zeroesToDrawOnTheRightSide > 0) {
-            for (i in 0 until zeroesToDrawOnTheRightSide) {
-                Image(
-                    painter = LocalGameIcons.icons.digits.getValue('0'),
-                    contentDescription = "0",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.height(26.dp),
-                )
-            }
-        }
-        for (char in minesStringified) {
+private fun Counter(value: Int, modifier: Modifier = Modifier) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.Center) {
+        value.toCounterString().forEach { char ->
             Image(
+                modifier = Modifier.size(width = 13.dp, height = 23.dp),
                 painter = LocalGameIcons.icons.digits.getValue(char),
                 contentDescription = char.toString(),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.height(26.dp),
             )
         }
     }
 }
+
+private fun Int.toCounterString(): String =
+    if (this >= 0) {
+        coerceAtMost(999).toString().padStart(length = COUNTER_LENGTH, padChar = '0')
+    } else {
+        "-" + coerceAtLeast(-99).absoluteValue.toString().padStart(length = COUNTER_LENGTH - 1, padChar = '0')
+    }
 
 @Composable
 private fun CellContent(cell: Cell, modifier: Modifier = Modifier) {
@@ -216,9 +193,9 @@ private fun RestartButton(
 }
 
 @Composable
-fun Stopwatch() {
-    // TODO: Implement stopwatch feature
-}
+fun Stopwatch(
+    modifier: Modifier = Modifier
+) = Counter(value = 0, modifier = modifier)
 
 @Composable
 private fun ControlsInfo(modifier: Modifier = Modifier) {
