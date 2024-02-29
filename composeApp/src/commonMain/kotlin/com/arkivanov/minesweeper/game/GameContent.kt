@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.minesweeper.setSemantics
 import kotlin.math.absoluteValue
 
 private val cellSize = 16.dp
@@ -73,11 +74,12 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    // TODO: Doesn't know how to use it right, just Counter,
-                    //       or create composable function RemainingMines, and use counter there
                     Counter(
                         value = remainingMines,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).setSemantics(
+                            description = "Counter of remaining bombs",
+                            role = Role.Image,
+                        ),
                     )
 
                     RestartButton(
