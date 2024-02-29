@@ -312,7 +312,7 @@ internal class PreviewGameComponent : GameComponent {
                                 when ((x + y) % 3) {
                                     0 -> CellValue.None
                                     1 -> CellValue.Mine
-                                    else -> CellValue.Number(number = number % 10)
+                                    else -> CellValue.Number(number = number % 8 + 1)
                                 }
 
                             val status =
