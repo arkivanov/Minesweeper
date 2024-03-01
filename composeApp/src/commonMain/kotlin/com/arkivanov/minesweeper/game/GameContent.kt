@@ -46,12 +46,14 @@ import androidx.compose.ui.input.pointer.isTertiaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.minesweeper.setSemantics
 import kotlin.math.absoluteValue
 
 private val cellSize = 16.dp
@@ -76,10 +78,10 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                 ) {
                     Counter(
                         value = remainingMines,
-                        modifier = Modifier.weight(1f).setSemantics(
-                            description = "Counter of remaining bombs",
-                            role = Role.Image,
-                        ),
+                        modifier = Modifier.weight(1f).semantics {
+                            this.contentDescription = "Counter of remaining bombs"
+                            this.role = Role.Image
+                        },
                     )
 
                     RestartButton(
@@ -89,7 +91,8 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                         onClick = component::onRestartClicked,
                     )
 
-                    Stopwatch(modifier = Modifier.weight(1f))
+                    // TODO: Reserved for implementing the Stopwatch
+                    Counter(value = 0, modifier = Modifier.weight(1f))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -190,11 +193,6 @@ private fun RestartButton(
             ),
     )
 }
-
-@Composable
-fun Stopwatch(
-    modifier: Modifier = Modifier
-) = Counter(value = 0, modifier = modifier)
 
 @Composable
 private fun ControlsInfo(modifier: Modifier = Modifier) {
