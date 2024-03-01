@@ -46,14 +46,18 @@ import androidx.compose.ui.input.pointer.isTertiaryPressed
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import kotlin.math.absoluteValue
 
 private val cellSize = 16.dp
+private const val COUNTER_LENGTH = 3
 
 @Composable
 internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier) {
@@ -63,7 +67,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
     val gridWidth by derivedStateOf { state.width }
     val gridHeight by derivedStateOf { state.height }
     val grid by derivedStateOf { state.grid }
-    val remainingBombs by derivedStateOf { state.remainingMines }
+    val remainingMines by derivedStateOf { state.remainingMines }
 
     CompositionLocalProvider(LocalGameIcons provides gameIcons()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
@@ -72,11 +76,12 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    Text(
-                        text = "$remainingBombs",
-                        style = MaterialTheme.typography.body2,
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
+                    Counter(
+                        value = remainingMines,
+                        modifier = Modifier.weight(1f).semantics {
+                            this.contentDescription = "Counter of remaining bombs"
+                            this.role = Role.Image
+                        },
                     )
 
                     RestartButton(
@@ -86,12 +91,8 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                         onClick = component::onRestartClicked,
                     )
 
-                    Text(
-                        text = "000", // TODO: Place for stopwatch
-                        style = MaterialTheme.typography.body2,
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
-                    )
+                    // TODO: Reserved for implementing the Stopwatch
+                    Counter(value = 0, modifier = Modifier.weight(1f))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -125,6 +126,26 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
         }
     }
 }
+
+@Composable
+private fun Counter(value: Int, modifier: Modifier = Modifier) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.Center) {
+        value.toCounterString().forEach { char ->
+            Image(
+                modifier = Modifier.size(width = 13.dp, height = 23.dp),
+                painter = LocalGameIcons.icons.digits.getValue(char),
+                contentDescription = char.toString(),
+            )
+        }
+    }
+}
+
+private fun Int.toCounterString(): String =
+    if (this >= 0) {
+        coerceAtMost(999).toString().padStart(length = COUNTER_LENGTH, padChar = '0')
+    } else {
+        "-" + coerceAtLeast(-99).absoluteValue.toString().padStart(length = COUNTER_LENGTH - 1, padChar = '0')
+    }
 
 @Composable
 private fun CellContent(cell: Cell, modifier: Modifier = Modifier) {
