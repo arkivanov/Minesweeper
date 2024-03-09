@@ -4,7 +4,7 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.minesweeper.asValue
 import com.arkivanov.minesweeper.game.stopwatch.StopwatchViewModel
-import com.arkivanov.minesweeper.game.stopwatch.utils.provideStopwatchStateHolder
+import com.arkivanov.minesweeper.game.stopwatch.provideStopwatchStateHolder
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import kotlinx.coroutines.CoroutineScope
@@ -30,8 +30,8 @@ internal class DefaultGameComponent(
     // TODO: Stuck & Overwhelmed:
     //  1. Should to hoist scope / stopwatchViewModel ?
     //  2. Combine state and stopwatchViewModel in one entity (GameViewModel)
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    override val stopwatchViewModel =
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    override val stopwatchViewModel: StopwatchViewModel =
         StopwatchViewModel(stopwatchStateHolder = provideStopwatchStateHolder(), scope = scope)
 
     init {

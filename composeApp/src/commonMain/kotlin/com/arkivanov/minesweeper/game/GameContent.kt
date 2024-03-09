@@ -56,7 +56,7 @@ import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.minesweeper.game.stopwatch.StopwatchViewModel
-import com.arkivanov.minesweeper.game.stopwatch.utils.provideStopwatchStateHolder
+import com.arkivanov.minesweeper.game.stopwatch.provideStopwatchStateHolder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -363,7 +363,8 @@ internal class PreviewGameComponent : GameComponent {
             )
         )
 
-    // TODO: Use DispatcherProvider, that allow use right threads on each platform, include tests
+    // TODO: Use DispatcherProvider (create it somewhere at root?),
+    //  that allow use right threads on each platform, include tests
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     override val stopwatchViewModel: StopwatchViewModel =
         StopwatchViewModel(stopwatchStateHolder = provideStopwatchStateHolder(), scope = scope)

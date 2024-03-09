@@ -1,11 +1,12 @@
-package com.arkivanov.minesweeper.game.stopwatch.utils
+package com.arkivanov.minesweeper.game.stopwatch
 
 import com.arkivanov.minesweeper.game.stopwatch.Timestamp
+import com.arkivanov.minesweeper.game.stopwatch.TimestampProvider
 import com.arkivanov.minesweeper.game.stopwatch.ElapsedTimeCalculator
 import com.arkivanov.minesweeper.game.stopwatch.StopwatchStateCalculator
 import com.arkivanov.minesweeper.game.stopwatch.StopwatchStateHolder
 
-// TODO: Deprecate it later
+// TODO: Deprecate (re-develop) it later
 //  Reason: Provide with function, not so really powerful and how must be done, but its stub for a time,
 //  because I'm stuck & overwhelmed with thing of convenient and `correct` usage the Stopwatch in a project
 internal fun provideStopwatchStateHolder(): StopwatchStateHolder {

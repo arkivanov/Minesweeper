@@ -25,6 +25,8 @@ internal class StopwatchStateHolder(
             is StopwatchState.Paused -> currentState.elapsedTime
             is StopwatchState.Running -> elapsedTimeCalculator.calculate(currentState)
         }
-        return (elapsedTime / 1000).toInt()
+        return elapsedTime.toSeconds().toInt()
     }
 }
+
+private fun Long.toSeconds() = this / 1000
