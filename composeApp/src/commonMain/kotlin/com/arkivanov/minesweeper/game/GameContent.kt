@@ -19,14 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -54,6 +47,11 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.minesweeper.game.stopwatch.StopwatchViewModel
+import com.arkivanov.minesweeper.game.stopwatch.utils.provideStopwatchStateHolder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlin.math.absoluteValue
 
 private val cellSize = 16.dp
@@ -68,6 +66,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
     val gridHeight by derivedStateOf { state.height }
     val grid by derivedStateOf { state.grid }
     val remainingMines by derivedStateOf { state.remainingMines }
+    val stopwatch = component.stopwatchViewModel.ticker.collectAsState()
 
     CompositionLocalProvider(LocalGameIcons provides gameIcons()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
@@ -91,8 +90,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                         onClick = component::onRestartClicked,
                     )
 
-                    // TODO: Reserved for implementing the Stopwatch
-                    Counter(value = 0, modifier = Modifier.weight(1f))
+                    Counter(value = stopwatch.value, modifier = Modifier.weight(1f))
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -350,6 +348,11 @@ internal class PreviewGameComponent : GameComponent {
                 },
             )
         )
+
+    // TODO: Use DispatcherProvider, that allow use right threads on each platform, include tests
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    override val stopwatchViewModel: StopwatchViewModel =
+        StopwatchViewModel(stopwatchStateHolder = provideStopwatchStateHolder(), scope = scope)
 
     override fun onCellTouchedPrimary(x: Int, y: Int) {}
     override fun onCellPressedSecondary(x: Int, y: Int) {}

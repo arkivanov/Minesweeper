@@ -2,10 +2,12 @@ package com.arkivanov.minesweeper.game
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.minesweeper.game.stopwatch.StopwatchViewModel
 
 internal interface GameComponent {
 
     val state: Value<GameState>
+    val stopwatchViewModel: StopwatchViewModel
 
     fun onCellTouchedPrimary(x: Int, y: Int)
     fun onCellPressedSecondary(x: Int, y: Int)
