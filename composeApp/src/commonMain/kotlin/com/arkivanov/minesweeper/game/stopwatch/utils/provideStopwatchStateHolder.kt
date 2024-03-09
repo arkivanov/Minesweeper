@@ -2,7 +2,6 @@ package com.arkivanov.minesweeper.game.stopwatch.utils
 
 import com.arkivanov.minesweeper.game.stopwatch.*
 import com.arkivanov.minesweeper.game.stopwatch.StopwatchStateHolder
-import com.arkivanov.minesweeper.game.stopwatch.TimestampMillisecondsFormatter
 
 // TODO: Deprecate it later
 //  Reason: Provide with function, not so really powerful and how must be done, but its stub for a time,
@@ -17,6 +16,5 @@ internal fun provideStopwatchStateHolder(): StopwatchStateHolder {
     return StopwatchStateHolder(
         stopwatchStateCalculator = stopwatchStateCalculator,
         elapsedTimeCalculator = elapsedTimeCalculator,
-        timestampMillisecondsFormatter = TimestampMillisecondsFormatter()
     )
 }

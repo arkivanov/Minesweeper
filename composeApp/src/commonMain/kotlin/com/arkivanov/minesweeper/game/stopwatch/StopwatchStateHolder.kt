@@ -3,7 +3,6 @@ package com.arkivanov.minesweeper.game.stopwatch
 internal class StopwatchStateHolder(
     private val stopwatchStateCalculator: StopwatchStateCalculator,
     private val elapsedTimeCalculator: ElapsedTimeCalculator,
-    private val timestampMillisecondsFormatter: TimestampMillisecondsFormatter,
 ) {
 
     var currentState: StopwatchState = StopwatchState.Paused(0)
