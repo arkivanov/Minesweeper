@@ -42,7 +42,7 @@ kotlin {
             implementation(libs.decompose.extensions.compose)
             implementation(libs.serialization.json)
 
-//            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
             implementation("com.arkivanov.essenty:lifecycle-coroutines:2.0.0-alpha02")
         }
 
@@ -52,8 +52,7 @@ kotlin {
 
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
-//            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-macosArm64:1.8.0")
-            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.8.0")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.0")
         }
     }
 }
