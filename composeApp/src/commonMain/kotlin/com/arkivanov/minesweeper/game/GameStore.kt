@@ -79,8 +79,7 @@ private fun GameState.pressCells(location: Location): GameState {
     val cells = ArrayList<Pair<Location, Cell>>()
     location.forEachAround { loc ->
         val cell = grid[loc] ?: return@forEachAround
-        val status =
-            (cell.status as? CellStatus.Closed)?.takeUnless { it.isFlagged || it.isPressed } ?: return@forEachAround
+        val status = (cell.status as? CellStatus.Closed)?.takeUnless { it.isFlagged || it.isPressed } ?: return@forEachAround
         cells += loc to cell.copy(status = status.copy(isPressed = true))
     }
 
