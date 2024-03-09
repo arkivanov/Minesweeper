@@ -1,6 +1,8 @@
 package com.arkivanov.minesweeper.game.stopwatch.utils
 
-import com.arkivanov.minesweeper.game.stopwatch.*
+import com.arkivanov.minesweeper.game.stopwatch.Timestamp
+import com.arkivanov.minesweeper.game.stopwatch.ElapsedTimeCalculator
+import com.arkivanov.minesweeper.game.stopwatch.StopwatchStateCalculator
 import com.arkivanov.minesweeper.game.stopwatch.StopwatchStateHolder
 
 // TODO: Deprecate it later
