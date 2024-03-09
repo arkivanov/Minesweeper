@@ -27,7 +27,9 @@ internal class DefaultGameComponent(
 
     override val state: Value<GameState> = store.asValue()
 
-    // TODO: Stuck & Overwhelmed: Should to hoist scope / stopwatchViewModel ?
+    // TODO: Stuck & Overwhelmed:
+    //  1. Should to hoist scope / stopwatchViewModel ?
+    //  2. Combine state and stopwatchViewModel in one entity (GameViewModel)
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     override val stopwatchViewModel =
         StopwatchViewModel(stopwatchStateHolder = provideStopwatchStateHolder(), scope = scope)

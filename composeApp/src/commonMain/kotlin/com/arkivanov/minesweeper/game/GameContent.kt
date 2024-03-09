@@ -86,7 +86,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                     Counter(
                         value = remainingMines,
                         modifier = Modifier.weight(1f).semantics {
-                            this.contentDescription = "Counter of remaining bombs"
+                            this.contentDescription = "Counter of remaining bombs, bombs left: $remainingMines"
                             this.role = Role.Image
                         },
                     )
@@ -98,7 +98,13 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                         onClick = component::onRestartClicked,
                     )
 
-                    Counter(value = stopwatch.value, modifier = Modifier.weight(1f))
+                    Counter(
+                        value = stopwatch.value,
+                        modifier = Modifier.weight(1f).semantics {
+                            this.contentDescription = "Stopwatch, current time: ${stopwatch.value}"
+                            this.role = Role.Image
+                        },
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
