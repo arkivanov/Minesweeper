@@ -10,6 +10,7 @@ internal data class GameState(
     val maxMines: Int = grid.values.count { it.value.isMine },
     val gameStatus: GameStatus = GameStatus.INITIALIZED,
     val pressMode: PressMode = PressMode.NONE,
+    val timer: Int = 0,
 ) {
     init {
         require(grid.size == width * height) { "Grid size must be equal to width * height" }

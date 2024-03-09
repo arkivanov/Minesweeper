@@ -2,20 +2,22 @@ package com.arkivanov.minesweeper.game
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.decompose.value.operator.map
+import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
 import com.arkivanov.minesweeper.asValue
-import com.arkivanov.minesweeper.game.stopwatch.StopwatchViewModel
-import com.arkivanov.minesweeper.game.stopwatch.provideStopwatchStateHolder
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 internal class DefaultGameComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     settings: GameSettings,
 ) : GameComponent, ComponentContext by componentContext {
+
+    private val scope = coroutineScope()
 
     private val store =
         instanceKeeper.getStore {
@@ -27,21 +29,23 @@ internal class DefaultGameComponent(
 
     override val state: Value<GameState> = store.asValue()
 
-    // TODO: Stuck & Overwhelmed:
-    //  1. Should to hoist scope / stopwatchViewModel ?
-    //  2. Combine state and stopwatchViewModel in one entity (GameViewModel)
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-    override val stopwatchViewModel: StopwatchViewModel =
-        StopwatchViewModel(stopwatchStateHolder = provideStopwatchStateHolder(), scope = scope)
-
     init {
         stateKeeper.register(key = KEY_SAVED_STATE, strategy = GameState.serializer()) { store.state }
+        scope.launch {
+            state
+                .map { it.gameStatus == GameStatus.STARTED }
+                .let { isStarted ->
+                    if (isStarted.value)
+                        while (true) {
+                            delay(1.seconds)
+                            store.accept(Intent.TickTimer)
+                        }
+                }
+        }
     }
 
     override fun onCellTouchedPrimary(x: Int, y: Int) {
-        store.accept(Intent.PressCell(x = x, y = y)).also {
-            stopwatchViewModel.start()
-        }
+        store.accept(Intent.PressCell(x = x, y = y))
     }
 
     override fun onCellPressedSecondary(x: Int, y: Int) {
@@ -57,9 +61,7 @@ internal class DefaultGameComponent(
     }
 
     override fun onRestartClicked() {
-        store.accept(Intent.Restart).also {
-            stopwatchViewModel.stop()
-        }
+        store.accept(Intent.Restart)
     }
 
     private companion object {

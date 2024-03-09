@@ -10,6 +10,7 @@ internal sealed interface Intent {
     data class PressCells(val x: Int, val y: Int) : Intent
     data class ReleaseCells(val x: Int, val y: Int) : Intent
     data class ToggleFlag(val x: Int, val y: Int) : Intent
+    data object TickTimer : Intent
     data object Restart : Intent
 }
 
@@ -43,6 +44,7 @@ private fun GameState.reduce(intent: Intent): GameState =
         is Intent.PressCells -> pressCellsIntent(location = intent.x by intent.y)
         is Intent.ReleaseCells -> releaseCellsIntent(location = intent.x by intent.y)
         is Intent.ToggleFlag -> toggleFlagIntent(location = intent.x by intent.y)
+        is Intent.TickTimer -> tick()
         is Intent.Restart -> newGameState(width = width, height = height, maxMines = maxMines)
     }.finishIfNeeded()
 
@@ -77,7 +79,8 @@ private fun GameState.pressCells(location: Location): GameState {
     val cells = ArrayList<Pair<Location, Cell>>()
     location.forEachAround { loc ->
         val cell = grid[loc] ?: return@forEachAround
-        val status = (cell.status as? CellStatus.Closed)?.takeUnless { it.isFlagged || it.isPressed } ?: return@forEachAround
+        val status =
+            (cell.status as? CellStatus.Closed)?.takeUnless { it.isFlagged || it.isPressed } ?: return@forEachAround
         cells += loc to cell.copy(status = status.copy(isPressed = true))
     }
 
@@ -210,4 +213,12 @@ private fun GameState.toggleFlagIntent(location: Location): GameState {
     val status = cell.status as? CellStatus.Closed ?: return this
 
     return copy(grid = grid + (location to cell.copy(status = status.copy(isFlagged = !status.isFlagged))))
+}
+
+private fun GameState.tick(): GameState {
+    if (timer >= 999) {
+        return this
+    }
+
+    return copy(timer = timer + 1)
 }
