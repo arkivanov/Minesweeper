@@ -2,15 +2,20 @@ package com.arkivanov.minesweeper.game
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.Value
-import com.arkivanov.decompose.value.operator.map
 import com.arkivanov.essenty.lifecycle.coroutines.coroutineScope
 import com.arkivanov.minesweeper.asValue
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class DefaultGameComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
@@ -32,14 +37,16 @@ internal class DefaultGameComponent(
     init {
         stateKeeper.register(key = KEY_SAVED_STATE, strategy = GameState.serializer()) { store.state }
         scope.launch {
-            state
+            store.stateFlow
                 .map { it.gameStatus == GameStatus.STARTED }
-                .let { isStarted ->
-                    if (isStarted.value)
+                .distinctUntilChanged()
+                .collectLatest { isStarted ->
+                    if (isStarted) {
                         while (true) {
                             delay(1.seconds)
                             store.accept(Intent.TickTimer)
                         }
+                    }
                 }
         }
     }

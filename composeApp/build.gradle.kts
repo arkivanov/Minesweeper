@@ -38,6 +38,7 @@ kotlin {
             implementation(libs.mvikotlin)
             implementation(libs.mvikotlin.main)
             implementation(libs.mvikotlin.timetravel)
+            implementation(libs.mvikotlin.coroutines)
             implementation(libs.decompose)
             implementation(libs.decompose.extensions.compose)
             implementation(libs.serialization.json)
