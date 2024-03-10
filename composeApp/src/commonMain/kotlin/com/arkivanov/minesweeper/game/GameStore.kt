@@ -214,10 +214,5 @@ private fun GameState.toggleFlagIntent(location: Location): GameState {
     return copy(grid = grid + (location to cell.copy(status = status.copy(isFlagged = !status.isFlagged))))
 }
 
-private fun GameState.tick(): GameState {
-    if (timer >= 999) {
-        return this
-    }
-
-    return copy(timer = timer + 1)
-}
+private fun GameState.tick(): GameState =
+    if (timer < 999) copy(timer = timer + 1) else this
