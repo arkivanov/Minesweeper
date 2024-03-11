@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -20,9 +21,10 @@ internal class DefaultGameComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     settings: GameSettings,
+    coroutineContext: CoroutineContext
 ) : GameComponent, ComponentContext by componentContext {
 
-    private val scope = coroutineScope()
+    private val scope = coroutineScope(context = coroutineContext)
 
     private val store =
         instanceKeeper.getStore {
