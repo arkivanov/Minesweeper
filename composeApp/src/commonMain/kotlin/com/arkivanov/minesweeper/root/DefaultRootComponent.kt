@@ -15,9 +15,7 @@ import com.arkivanov.minesweeper.game.GameSettings
 import com.arkivanov.minesweeper.settings.DefaultEditSettingsComponent
 import com.arkivanov.minesweeper.settings.EditSettingsComponent
 import com.arkivanov.mvikotlin.core.store.StoreFactory
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 
 internal class DefaultRootComponent(
     componentContext: ComponentContext,
@@ -63,7 +61,12 @@ internal fun DefaultRootComponent(componentContext: ComponentContext, storeFacto
     DefaultRootComponent(
         componentContext = componentContext,
         gameComponentFactory = { ctx, settings ->
-            DefaultGameComponent(componentContext = ctx, storeFactory = storeFactory, settings = settings, coroutineContext = SupervisorJob() + Dispatchers.Default)
+            DefaultGameComponent(
+                componentContext = ctx,
+                storeFactory = storeFactory,
+                settings = settings,
+                mainCoroutineContext = Dispatchers.Main.immediate
+            )
         },
         editSettingsComponentFactory = ::DefaultEditSettingsComponent,
     )

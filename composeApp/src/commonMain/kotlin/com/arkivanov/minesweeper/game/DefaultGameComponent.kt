@@ -8,6 +8,7 @@ import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -21,10 +22,10 @@ internal class DefaultGameComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     settings: GameSettings,
-    coroutineContext: CoroutineContext
+    mainCoroutineContext: CoroutineContext
 ) : GameComponent, ComponentContext by componentContext {
 
-    private val scope = coroutineScope(context = coroutineContext)
+    private val scope = coroutineScope(context = SupervisorJob() + mainCoroutineContext)
 
     private val store =
         instanceKeeper.getStore {
