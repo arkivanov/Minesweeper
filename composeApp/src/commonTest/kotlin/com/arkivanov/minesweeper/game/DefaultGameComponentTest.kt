@@ -22,6 +22,9 @@ class DefaultGameComponentTest {
         mainCoroutineContext = StandardTestDispatcher(scheduler = coroutineScheduler)
     )
 
+    private val state: GameState
+        get() = gameComponent.state.value
+
     @BeforeTest
     fun before() {
         lifecycle.resume()
@@ -29,8 +32,8 @@ class DefaultGameComponentTest {
 
     @Test
     fun WHEN_created_THEN_stopwatch_on_START() {
-        val gameState = gameComponent.state.value
-        assertEquals(0, gameState.timer)
+        assertEquals(GameStatus.INITIALIZED, state.gameStatus)
+        assertEquals(0, state.timer)
     }
 
     // TODO: Write more tests (need a bit dive in to work with TestCoroutineScheduler

@@ -25,7 +25,7 @@ internal class DefaultGameComponent(
     mainCoroutineContext: CoroutineContext
 ) : GameComponent, ComponentContext by componentContext {
 
-    private val scope = coroutineScope(context = SupervisorJob() + mainCoroutineContext)
+    private val scope = coroutineScope(context = mainCoroutineContext + SupervisorJob())
 
     private val store =
         instanceKeeper.getStore {
