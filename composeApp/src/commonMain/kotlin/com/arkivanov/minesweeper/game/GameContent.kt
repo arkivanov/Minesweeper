@@ -95,7 +95,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                     Counter(
                         value = timer,
                         modifier = Modifier.weight(1f).semantics {
-                            this.contentDescription = "Stopwatch, current time: $timer"
+                            this.contentDescription = "Timer is on $timer"
                             this.role = Role.Image
                         },
                     )
