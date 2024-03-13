@@ -31,24 +31,26 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material)
             implementation(compose.ui)
-
-            @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
 
             implementation(libs.mvikotlin)
             implementation(libs.mvikotlin.main)
             implementation(libs.mvikotlin.timetravel)
+            implementation(libs.mvikotlin.coroutines)
             implementation(libs.decompose)
             implementation(libs.decompose.extensions.compose)
             implementation(libs.serialization.json)
+            implementation(libs.essenty.lifecycle.coroutines)
         }
 
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(libs.coroutines.test)
         }
 
         jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(libs.coroutines.swing)
         }
     }
 }

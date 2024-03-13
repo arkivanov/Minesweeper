@@ -68,6 +68,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
     val gridHeight by derivedStateOf { state.height }
     val grid by derivedStateOf { state.grid }
     val remainingMines by derivedStateOf { state.remainingMines }
+    val timer by derivedStateOf { state.timer }
 
     CompositionLocalProvider(LocalGameIcons provides gameIcons()) {
         Box(modifier = modifier, contentAlignment = Alignment.Center) {
@@ -79,7 +80,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                     Counter(
                         value = remainingMines,
                         modifier = Modifier.weight(1f).semantics {
-                            this.contentDescription = "Counter of remaining bombs"
+                            this.contentDescription = "Counter of remaining bombs, bombs left: $remainingMines"
                             this.role = Role.Image
                         },
                     )
@@ -91,8 +92,13 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                         onClick = component::onRestartClicked,
                     )
 
-                    // TODO: Reserved for implementing the Stopwatch
-                    Counter(value = 0, modifier = Modifier.weight(1f))
+                    Counter(
+                        value = timer,
+                        modifier = Modifier.weight(1f).semantics {
+                            this.contentDescription = "Timer is on $timer"
+                            this.role = Role.Image
+                        },
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
