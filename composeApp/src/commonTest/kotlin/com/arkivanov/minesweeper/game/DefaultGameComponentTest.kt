@@ -71,7 +71,7 @@ class DefaultGameComponentTest {
     }
 
     @Test
-    fun GIVEN_game_started_WHEN_status_win_THEN_timer_STOPS() {
+    fun GIVEN_game_started_WHEN_win_THEN_timer_STOPS() {
         clickCellPrimary(0 by 0)
 
         coroutineScheduler.advanceTimeBy(25.seconds)
