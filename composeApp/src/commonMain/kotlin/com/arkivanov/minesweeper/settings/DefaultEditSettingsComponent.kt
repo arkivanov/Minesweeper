@@ -5,6 +5,7 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.arkivanov.minesweeper.game.GameSettings
 import com.arkivanov.minesweeper.settings.EditSettingsComponent.Model
+import kotlin.math.min
 
 internal class DefaultEditSettingsComponent(
     settings: GameSettings,
@@ -44,7 +45,7 @@ internal class DefaultEditSettingsComponent(
             GameSettings(
                 width = width,
                 height = height,
-                maxMines = maxMines,
+                maxMines = min(maxMines, width * height),
             )
         )
     }
