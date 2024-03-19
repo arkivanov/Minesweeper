@@ -5,7 +5,6 @@ import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.update
 import com.arkivanov.minesweeper.game.GameSettings
 import com.arkivanov.minesweeper.settings.EditSettingsComponent.Model
-import kotlin.math.min
 
 internal class DefaultEditSettingsComponent(
     settings: GameSettings,
@@ -41,13 +40,11 @@ internal class DefaultEditSettingsComponent(
         val height = _model.value.height.toIntOrNull() ?: return
         val maxMines = _model.value.maxMines.toIntOrNull() ?: return
 
-        onConfirmed(
-            GameSettings(
-                width = width,
-                height = height,
-                maxMines = min(maxMines, width * height),
-            )
-        )
+        val finalWidth = width.coerceIn(2..100)
+        val finalHeight = height.coerceIn(2..50)
+        val finalMines = maxMines.coerceIn(1 until finalWidth * finalHeight - 1)
+
+        onConfirmed(GameSettings(width = finalWidth, height = finalHeight, maxMines = finalMines))
     }
 
     override fun onDismissRequested() {
