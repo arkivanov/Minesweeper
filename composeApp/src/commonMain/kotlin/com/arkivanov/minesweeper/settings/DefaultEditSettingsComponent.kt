@@ -6,6 +6,10 @@ import com.arkivanov.decompose.value.update
 import com.arkivanov.minesweeper.game.GameSettings
 import com.arkivanov.minesweeper.settings.EditSettingsComponent.Model
 
+private const val MIN_SIZE = 2
+private const val MAX_WIDTH = 100
+private const val MAX_HEIGHT = 50
+
 internal class DefaultEditSettingsComponent(
     settings: GameSettings,
     private val onConfirmed: (GameSettings) -> Unit,
@@ -40,8 +44,8 @@ internal class DefaultEditSettingsComponent(
         val height = _model.value.height.toIntOrNull() ?: return
         val maxMines = _model.value.maxMines.toIntOrNull() ?: return
 
-        val finalWidth = width.coerceIn(2..100)
-        val finalHeight = height.coerceIn(2..50)
+        val finalWidth = width.coerceIn(MIN_SIZE..MAX_WIDTH)
+        val finalHeight = height.coerceIn(MIN_SIZE..MAX_HEIGHT)
         val finalMines = maxMines.coerceIn(1 until finalWidth * finalHeight - 1)
 
         onConfirmed(GameSettings(width = finalWidth, height = finalHeight, maxMines = finalMines))
