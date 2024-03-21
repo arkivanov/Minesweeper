@@ -40,13 +40,11 @@ internal class DefaultEditSettingsComponent(
         val height = _model.value.height.toIntOrNull() ?: return
         val maxMines = _model.value.maxMines.toIntOrNull() ?: return
 
-        onConfirmed(
-            GameSettings(
-                width = width,
-                height = height,
-                maxMines = maxMines,
-            )
-        )
+        val finalWidth = width.coerceIn(2..100)
+        val finalHeight = height.coerceIn(2..50)
+        val finalMines = maxMines.coerceIn(1 until finalWidth * finalHeight)
+
+        onConfirmed(GameSettings(width = finalWidth, height = finalHeight, maxMines = finalMines))
     }
 
     override fun onDismissRequested() {
