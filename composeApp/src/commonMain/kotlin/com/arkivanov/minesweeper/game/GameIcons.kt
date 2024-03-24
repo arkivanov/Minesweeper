@@ -5,7 +5,35 @@ import androidx.compose.runtime.CompositionLocal
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.painter.Painter
-import org.jetbrains.compose.resources.DrawableResource
+import minesweeper.composeapp.generated.resources.Res
+import minesweeper.composeapp.generated.resources.cell_closed
+import minesweeper.composeapp.generated.resources.cell_closed_flag
+import minesweeper.composeapp.generated.resources.cell_open
+import minesweeper.composeapp.generated.resources.cell_open_mine
+import minesweeper.composeapp.generated.resources.cell_open_1
+import minesweeper.composeapp.generated.resources.cell_open_2
+import minesweeper.composeapp.generated.resources.cell_open_3
+import minesweeper.composeapp.generated.resources.cell_open_4
+import minesweeper.composeapp.generated.resources.cell_open_5
+import minesweeper.composeapp.generated.resources.cell_open_6
+import minesweeper.composeapp.generated.resources.cell_open_7
+import minesweeper.composeapp.generated.resources.cell_open_8
+import minesweeper.composeapp.generated.resources.smile_failed
+import minesweeper.composeapp.generated.resources.smile_normal
+import minesweeper.composeapp.generated.resources.smile_pressed
+import minesweeper.composeapp.generated.resources.smile_win
+import minesweeper.composeapp.generated.resources.smile_trying
+import minesweeper.composeapp.generated.resources.digit_0
+import minesweeper.composeapp.generated.resources.digit_1
+import minesweeper.composeapp.generated.resources.digit_2
+import minesweeper.composeapp.generated.resources.digit_3
+import minesweeper.composeapp.generated.resources.digit_4
+import minesweeper.composeapp.generated.resources.digit_5
+import minesweeper.composeapp.generated.resources.digit_6
+import minesweeper.composeapp.generated.resources.digit_7
+import minesweeper.composeapp.generated.resources.digit_8
+import minesweeper.composeapp.generated.resources.digit_9
+import minesweeper.composeapp.generated.resources.digit_minus
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -27,26 +55,38 @@ internal data class GameIcons(
 @Composable
 internal fun gameIcons(): GameIcons =
     GameIcons(
-        cellClosed = painterResource(DrawableResource("cell_closed.png")),
-        cellClosedFlag = painterResource(DrawableResource("cell_closed_flag.png")),
-        cellOpen = painterResource(DrawableResource("cell_open.png")),
-        cellOpenMine = painterResource(DrawableResource("cell_open_mine.png")),
-        cellOpenNumbers = buildMap {
-            for (i in 1..8) {
-                put(i, painterResource(DrawableResource("cell_open_$i.png")))
-            }
-        },
-        smileFailed = painterResource(DrawableResource("smile_failed.png")),
-        smileNormal = painterResource(DrawableResource("smile_normal.png")),
-        smilePressed = painterResource(DrawableResource("smile_pressed.png")),
-        smileWin = painterResource(DrawableResource("smile_win.png")),
-        smileTrying = painterResource(DrawableResource("smile_trying.png")),
-        digits = buildMap {
-            for (i in '0'..'9') {
-                put(i, painterResource(DrawableResource("digit_$i.png")))
-            }
-            put('-', painterResource(DrawableResource("digit_minus.png")))
-        },
+        cellClosed = painterResource(Res.drawable.cell_closed),
+        cellClosedFlag = painterResource(Res.drawable.cell_closed_flag),
+        cellOpen = painterResource(Res.drawable.cell_open),
+        cellOpenMine = painterResource(Res.drawable.cell_open_mine),
+        cellOpenNumbers = mapOf(
+            1 to painterResource(Res.drawable.cell_open_1),
+            2 to painterResource(Res.drawable.cell_open_2),
+            3 to painterResource(Res.drawable.cell_open_3),
+            4 to painterResource(Res.drawable.cell_open_4),
+            5 to painterResource(Res.drawable.cell_open_5),
+            6 to painterResource(Res.drawable.cell_open_6),
+            7 to painterResource(Res.drawable.cell_open_7),
+            8 to painterResource(Res.drawable.cell_open_8),
+        ),
+        smileFailed = painterResource(Res.drawable.smile_failed),
+        smileNormal = painterResource(Res.drawable.smile_normal),
+        smilePressed = painterResource(Res.drawable.smile_pressed),
+        smileWin = painterResource(Res.drawable.smile_win),
+        smileTrying = painterResource(Res.drawable.smile_trying),
+        digits = mapOf(
+            '0' to painterResource(Res.drawable.digit_0),
+            '1' to painterResource(Res.drawable.digit_1),
+            '2' to painterResource(Res.drawable.digit_2),
+            '3' to painterResource(Res.drawable.digit_3),
+            '4' to painterResource(Res.drawable.digit_4),
+            '5' to painterResource(Res.drawable.digit_5),
+            '6' to painterResource(Res.drawable.digit_6),
+            '7' to painterResource(Res.drawable.digit_7),
+            '8' to painterResource(Res.drawable.digit_8),
+            '9' to painterResource(Res.drawable.digit_9),
+            '-' to painterResource(Res.drawable.digit_minus),
+        ),
     )
 
 internal val LocalGameIcons: ProvidableCompositionLocal<GameIcons?> =
