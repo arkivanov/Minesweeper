@@ -5,6 +5,8 @@ import androidx.compose.runtime.CompositionLocal
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.painter.Painter
+import minesweeper.composeapp.generated.resources.Res
+import minesweeper.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -27,25 +29,25 @@ internal data class GameIcons(
 @Composable
 internal fun gameIcons(): GameIcons =
     GameIcons(
-        cellClosed = painterResource(DrawableResource("cell_closed.png")),
-        cellClosedFlag = painterResource(DrawableResource("cell_closed_flag.png")),
-        cellOpen = painterResource(DrawableResource("cell_open.png")),
-        cellOpenMine = painterResource(DrawableResource("cell_open_mine.png")),
+        cellClosed = painterResource(Res.drawable.cell_closed),
+        cellClosedFlag = painterResource(Res.drawable.cell_closed_flag),
+        cellOpen = painterResource(Res.drawable.cell_open),
+        cellOpenMine = painterResource(Res.drawable.cell_open_mine),
         cellOpenNumbers = buildMap {
             for (i in 1..8) {
                 put(i, painterResource(DrawableResource("cell_open_$i.png")))
             }
         },
-        smileFailed = painterResource(DrawableResource("smile_failed.png")),
-        smileNormal = painterResource(DrawableResource("smile_normal.png")),
-        smilePressed = painterResource(DrawableResource("smile_pressed.png")),
-        smileWin = painterResource(DrawableResource("smile_win.png")),
-        smileTrying = painterResource(DrawableResource("smile_trying.png")),
+        smileFailed = painterResource(Res.drawable.smile_failed),
+        smileNormal = painterResource(Res.drawable.smile_normal),
+        smilePressed = painterResource(Res.drawable.smile_pressed),
+        smileWin = painterResource(Res.drawable.smile_win),
+        smileTrying = painterResource(Res.drawable.smile_trying),
         digits = buildMap {
             for (i in '0'..'9') {
                 put(i, painterResource(DrawableResource("digit_$i.png")))
             }
-            put('-', painterResource(DrawableResource("digit_minus.png")))
+            put('-', painterResource(Res.drawable.digit_minus))
         },
     )
 
