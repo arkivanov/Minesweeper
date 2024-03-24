@@ -33,22 +33,34 @@ internal fun gameIcons(): GameIcons =
         cellClosedFlag = painterResource(Res.drawable.cell_closed_flag),
         cellOpen = painterResource(Res.drawable.cell_open),
         cellOpenMine = painterResource(Res.drawable.cell_open_mine),
-        cellOpenNumbers = buildMap {
-            for (i in 1..8) {
-                put(i, painterResource(DrawableResource("cell_open_$i.png")))
-            }
-        },
+        cellOpenNumbers = mapOf(
+            1 to painterResource(Res.drawable.cell_open_1),
+            2 to painterResource(Res.drawable.cell_open_2),
+            3 to painterResource(Res.drawable.cell_open_3),
+            4 to painterResource(Res.drawable.cell_open_4),
+            5 to painterResource(Res.drawable.cell_open_5),
+            6 to painterResource(Res.drawable.cell_open_6),
+            7 to painterResource(Res.drawable.cell_open_7),
+            8 to painterResource(Res.drawable.cell_open_8),
+        ),
         smileFailed = painterResource(Res.drawable.smile_failed),
         smileNormal = painterResource(Res.drawable.smile_normal),
         smilePressed = painterResource(Res.drawable.smile_pressed),
         smileWin = painterResource(Res.drawable.smile_win),
         smileTrying = painterResource(Res.drawable.smile_trying),
-        digits = buildMap {
-            for (i in '0'..'9') {
-                put(i, painterResource(DrawableResource("digit_$i.png")))
-            }
-            put('-', painterResource(Res.drawable.digit_minus))
-        },
+        digits = mapOf(
+            '0' to painterResource(Res.drawable.digit_0),
+            '1' to painterResource(Res.drawable.digit_1),
+            '2' to painterResource(Res.drawable.digit_2),
+            '3' to painterResource(Res.drawable.digit_3),
+            '4' to painterResource(Res.drawable.digit_4),
+            '5' to painterResource(Res.drawable.digit_5),
+            '6' to painterResource(Res.drawable.digit_6),
+            '7' to painterResource(Res.drawable.digit_7),
+            '8' to painterResource(Res.drawable.digit_8),
+            '9' to painterResource(Res.drawable.digit_9),
+            '-' to painterResource(Res.drawable.digit_minus),
+        ),
     )
 
 internal val LocalGameIcons: ProvidableCompositionLocal<GameIcons?> =
