@@ -54,11 +54,24 @@ import androidx.compose.ui.unit.dp
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import minesweeper.composeapp.generated.resources.Res
+import minesweeper.composeapp.generated.resources.restart
+import minesweeper.composeapp.generated.resources.left_click
+import minesweeper.composeapp.generated.resources.dig_cell
+import minesweeper.composeapp.generated.resources.right_click
+import minesweeper.composeapp.generated.resources.flag_cell
+import minesweeper.composeapp.generated.resources.middle_click
+import minesweeper.composeapp.generated.resources.dig_all_cells
+import minesweeper.composeapp.generated.resources.desc_mines_left
+import minesweeper.composeapp.generated.resources.desc_duration
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import kotlin.math.absoluteValue
 
 private val cellSize = 16.dp
 private const val COUNTER_LENGTH = 3
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier) {
     val state by component.state.subscribeAsState()
@@ -79,10 +92,8 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                 ) {
                     Counter(
                         value = remainingMines,
-                        modifier = Modifier.weight(1f).semantics {
-                            this.contentDescription = "Counter of remaining bombs, bombs left: $remainingMines"
-                            this.role = Role.Image
-                        },
+                        contentDescription = stringResource(Res.string.desc_mines_left, remainingMines),
+                        modifier = Modifier.weight(1f),
                     )
 
                     RestartButton(
@@ -94,10 +105,8 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
 
                     Counter(
                         value = timer,
-                        modifier = Modifier.weight(1f).semantics {
-                            this.contentDescription = "Timer is on $timer"
-                            this.role = Role.Image
-                        },
+                        contentDescription = stringResource(Res.string.desc_duration, timer),
+                        modifier = Modifier.weight(1f),
                     )
                 }
 
@@ -134,8 +143,14 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
 }
 
 @Composable
-private fun Counter(value: Int, modifier: Modifier = Modifier) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.Center) {
+private fun Counter(value: Int, contentDescription: String, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.semantics {
+            this.contentDescription = contentDescription
+            this.role = Role.Image
+        },
+        horizontalArrangement = Arrangement.Center
+    ) {
         value.toCounterString().forEach { char ->
             Image(
                 modifier = Modifier.size(width = 13.dp, height = 23.dp),
@@ -150,7 +165,7 @@ private fun Int.toCounterString(): String =
     if (this >= 0) {
         coerceAtMost(999).toString().padStart(length = COUNTER_LENGTH, padChar = '0')
     } else {
-        "-" + coerceAtLeast(-99).absoluteValue.toString().padStart(length = COUNTER_LENGTH - 1, padChar = '0')
+        '-' + coerceAtLeast(-99).absoluteValue.toString().padStart(length = COUNTER_LENGTH - 1, padChar = '0')
     }
 
 @Composable
@@ -163,6 +178,7 @@ private fun CellContent(cell: Cell, modifier: Modifier = Modifier) {
     )
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun RestartButton(
     isWin: Boolean,
@@ -188,7 +204,7 @@ private fun RestartButton(
             isTrying -> LocalGameIcons.icons.smileTrying
             else -> LocalGameIcons.icons.smileNormal
         },
-        contentDescription = "Restart",
+        contentDescription = stringResource(Res.string.restart),
         modifier = modifier
             .size(26.dp)
             .clickable(
@@ -200,37 +216,38 @@ private fun RestartButton(
     )
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun ControlsInfo(modifier: Modifier = Modifier) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "Left click: ",
+                text = stringResource(Res.string.left_click),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.body2,
             )
 
-            Text(text = "dig a cell", style = MaterialTheme.typography.body2)
+            Text(text = stringResource(Res.string.dig_cell), style = MaterialTheme.typography.body2)
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "Right click (or Ctrl + Left click): ",
+                text = stringResource(Res.string.right_click),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.body2,
             )
 
-            Text(text = "flag a cell", style = MaterialTheme.typography.body2)
+            Text(text = stringResource(Res.string.flag_cell), style = MaterialTheme.typography.body2)
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "Middle click (or Left + Right click, or Shift + Left click): ",
+                text = stringResource(Res.string.middle_click),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.body2,
             )
 
-            Text(text = "dig all adjacent cells", style = MaterialTheme.typography.body2)
+            Text(text = stringResource(Res.string.dig_all_cells), style = MaterialTheme.typography.body2)
         }
     }
 }

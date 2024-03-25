@@ -9,8 +9,13 @@ import com.arkivanov.minesweeper.root.DefaultRootComponent
 import com.arkivanov.minesweeper.root.RootContent
 import com.arkivanov.mvikotlin.timetravel.server.TimeTravelServer
 import com.arkivanov.mvikotlin.timetravel.store.TimeTravelStoreFactory
+import minesweeper.composeapp.generated.resources.Res
+import minesweeper.composeapp.generated.resources.app_name
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 import javax.swing.SwingUtilities
 
+@OptIn(ExperimentalResourceApi::class)
 fun main() {
     TimeTravelServer(runOnMainThread = { SwingUtilities.invokeLater(it) })
         .start()
@@ -26,7 +31,7 @@ fun main() {
     application {
         val windowState = rememberWindowState()
 
-        Window(onCloseRequest = ::exitApplication, title = "Minesweeper", state = windowState) {
+        Window(onCloseRequest = ::exitApplication, title = stringResource(Res.string.app_name), state = windowState) {
             RootContent(component = root)
         }
 

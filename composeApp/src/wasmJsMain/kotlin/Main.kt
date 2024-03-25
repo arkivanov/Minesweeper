@@ -33,6 +33,7 @@ fun main() {
             null
         }
 
+    // TODO: Take the title from resources after https://youtrack.jetbrains.com/issue/KT-49981
     CanvasBasedWindow(title = "Minesweeper", canvasElementId = "ComposeTarget") {
         RootContent(root)
     }
