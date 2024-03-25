@@ -33,7 +33,7 @@ fun main() {
             null
         }
 
-    // TODO: Understand how to use resources for WAsm
+    // TODO: Take the title from resources after https://youtrack.jetbrains.com/issue/KT-49981
     CanvasBasedWindow(title = "Minesweeper", canvasElementId = "ComposeTarget") {
         RootContent(root)
     }

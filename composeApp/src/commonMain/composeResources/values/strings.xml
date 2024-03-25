@@ -9,7 +9,6 @@
     <string name="restart">Restart</string>
     <string name="settings">Settings</string>
 
-    // TODO: Accessibility check gives info that user can't select @Composable Counter`s with tab-navigation in our app - need to undertsand why and fix it.
     <string name="desc_mines_left">Mines left: %d</string>
     <string name="desc_duration">Duration: %d seconds</string>
     <string name="left_click">Left click: </string>
