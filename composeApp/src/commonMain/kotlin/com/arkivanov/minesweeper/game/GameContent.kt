@@ -62,6 +62,8 @@ import minesweeper.composeapp.generated.resources.right_click
 import minesweeper.composeapp.generated.resources.flag_cell
 import minesweeper.composeapp.generated.resources.middle_click
 import minesweeper.composeapp.generated.resources.dig_all_cells
+import minesweeper.composeapp.generated.resources.mines_counter
+import minesweeper.composeapp.generated.resources.timer
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.absoluteValue
@@ -90,11 +92,8 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                 ) {
                     Counter(
                         value = remainingMines,
-                        modifier = Modifier.weight(1f).semantics {
-                            // TODO: Use something like stringResource(Res.string.mines_counter, remainingMines)
-                            this.contentDescription = "Counter of remaining bombs, bombs left: $remainingMines"
-                            this.role = Role.Image
-                        },
+                        contentDescription = stringResource(Res.string.mines_counter, remainingMines),
+                        modifier = Modifier.weight(1f),
                     )
 
                     RestartButton(
@@ -106,11 +105,8 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
 
                     Counter(
                         value = timer,
-                        modifier = Modifier.weight(1f).semantics {
-                            // TODO: Use something like: stringResource(Res.string.timer, timer)
-                            this.contentDescription = "Timer is on $timer"
-                            this.role = Role.Image
-                        },
+                        contentDescription = stringResource(Res.string.timer, timer),
+                        modifier = Modifier.weight(1f),
                     )
                 }
 
@@ -147,8 +143,14 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
 }
 
 @Composable
-private fun Counter(value: Int, modifier: Modifier = Modifier) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.Center) {
+private fun Counter(value: Int, contentDescription: String, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.semantics {
+            this.contentDescription = contentDescription
+            this.role = Role.Image
+        },
+        horizontalArrangement = Arrangement.Center
+    ) {
         value.toCounterString().forEach { char ->
             Image(
                 modifier = Modifier.size(width = 13.dp, height = 23.dp),
