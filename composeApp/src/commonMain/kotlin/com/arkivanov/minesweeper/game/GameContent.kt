@@ -62,8 +62,8 @@ import minesweeper.composeapp.generated.resources.right_click
 import minesweeper.composeapp.generated.resources.flag_cell
 import minesweeper.composeapp.generated.resources.middle_click
 import minesweeper.composeapp.generated.resources.dig_all_cells
-import minesweeper.composeapp.generated.resources.mines_counter
-import minesweeper.composeapp.generated.resources.timer
+import minesweeper.composeapp.generated.resources.desc_mines_left
+import minesweeper.composeapp.generated.resources.desc_duration
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.absoluteValue
@@ -92,7 +92,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
                 ) {
                     Counter(
                         value = remainingMines,
-                        contentDescription = stringResource(Res.string.mines_counter, remainingMines),
+                        contentDescription = stringResource(Res.string.desc_mines_left, remainingMines),
                         modifier = Modifier.weight(1f),
                     )
 
@@ -105,7 +105,7 @@ internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier
 
                     Counter(
                         value = timer,
-                        contentDescription = stringResource(Res.string.timer, timer),
+                        contentDescription = stringResource(Res.string.desc_duration, timer),
                         modifier = Modifier.weight(1f),
                     )
                 }
