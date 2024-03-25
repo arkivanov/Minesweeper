@@ -1,2 +1,22 @@
 <resources>
+    <string name="app_name">Minesweeper</string>
+
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="mine_count">Mine count</string>
+    <string name="width">Width</string>
+    <string name="height">Height</string>
+    <string name="restart">Restart</string>
+    <string name="settings">Settings</string>
+
+    // TODO: Check how Accessability work, if its valueble - change trailing for: %d mines left
+    <string name="mines_counter">Counter of remaining mines, mines left: %d</string>
+    <string name="timer">Timer is on %d</string>
+    <string name="left_click">Left click: </string>
+    <string name="dig_cell">dig a cell</string>
+    <string name="right_click">Right click (or Ctrl + Left click): </string>
+    <string name="flag_cell">flag a cell</string>
+    <string name="middle_click">Middle click (or Left + Right click, or Shift + Left click): </string>
+    <string name="dig_all_cells">dig all adjacent cells</string>
+    // ".*"
 </resources>

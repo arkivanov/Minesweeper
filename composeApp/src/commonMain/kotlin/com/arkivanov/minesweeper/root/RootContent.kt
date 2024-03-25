@@ -16,7 +16,13 @@ import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.arkivanov.minesweeper.game.GameContent
 import com.arkivanov.minesweeper.settings.EditSettingsContent
+import minesweeper.composeapp.generated.resources.Res
+import minesweeper.composeapp.generated.resources.app_name
+import minesweeper.composeapp.generated.resources.settings
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun RootContent(component: RootComponent) {
     val gameComponent by component.gameComponent.subscribeAsState()
@@ -25,12 +31,12 @@ internal fun RootContent(component: RootComponent) {
     MaterialTheme {
         Column(modifier = Modifier.fillMaxSize()) {
             TopAppBar(
-                title = { Text("Minesweeper") },
+                title = { Text(stringResource(Res.string.app_name)) },
                 actions = {
                     IconButton(onClick = component::onEditSettingsClicked) {
                         Icon(
                             imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
+                            contentDescription = stringResource(Res.string.settings),
                         )
                     }
                 },

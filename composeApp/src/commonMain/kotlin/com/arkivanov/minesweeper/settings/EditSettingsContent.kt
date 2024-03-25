@@ -16,7 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.arkivanov.decompose.extensions.compose.subscribeAsState
+import minesweeper.composeapp.generated.resources.Res
+import minesweeper.composeapp.generated.resources.apply
+import minesweeper.composeapp.generated.resources.cancel
+import minesweeper.composeapp.generated.resources.height
+import minesweeper.composeapp.generated.resources.mine_count
+import minesweeper.composeapp.generated.resources.width
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.stringResource
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun EditSettingsContent(component: EditSettingsComponent) {
     val model by component.model.subscribeAsState()
@@ -30,21 +39,21 @@ internal fun EditSettingsContent(component: EditSettingsComponent) {
                 TextField(
                     value = model.width,
                     onValueChange = component::onWidthChanged,
-                    label = { Text(text = "Width") },
+                    label = { Text(text = stringResource(Res.string.width)) },
                     singleLine = true,
                 )
 
                 TextField(
                     value = model.height,
                     onValueChange = component::onHeightChanged,
-                    label = { Text(text = "Height") },
+                    label = { Text(text = stringResource(Res.string.height)) },
                     singleLine = true,
                 )
 
                 TextField(
                     value = model.maxMines,
                     onValueChange = component::onMaxMinesChanged,
-                    label = { Text(text = "Mine count") },
+                    label = { Text(text = stringResource(Res.string.mine_count)) },
                     singleLine = true,
                 )
 
@@ -53,11 +62,11 @@ internal fun EditSettingsContent(component: EditSettingsComponent) {
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     Button(onClick = component::onDismissRequested) {
-                        Text(text = "Cancel")
+                        Text(text = stringResource(Res.string.cancel))
                     }
 
                     Button(onClick = component::onConfirmClicked) {
-                        Text(text = "Apply")
+                        Text(text = stringResource(Res.string.apply))
                     }
                 }
             }

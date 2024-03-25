@@ -33,6 +33,7 @@ fun main() {
             null
         }
 
+    // TODO: Understand how to use resources for WAsm
     CanvasBasedWindow(title = "Minesweeper", canvasElementId = "ComposeTarget") {
         RootContent(root)
     }
