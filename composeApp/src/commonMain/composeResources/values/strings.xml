@@ -9,7 +9,8 @@
     <string name="restart">Restart</string>
     <string name="settings">Settings</string>
 
-    // TODO: Check how Accessability work, if its valueble - change trailing for: %d mines left
+    // TODO: Check how Accessibility work, if its valueble - change trailing for: %d mines left.
+    // TODO: Accessibility check gives info that user can't select @Composable Counter`s with tab-navigation in our app - need to undertsand why and fix it.
     <string name="mines_counter">Counter of remaining mines, mines left: %d</string>
     <string name="timer">Timer is on %d</string>
     <string name="left_click">Left click: </string>
@@ -18,5 +19,4 @@
     <string name="flag_cell">flag a cell</string>
     <string name="middle_click">Middle click (or Left + Right click, or Shift + Left click): </string>
     <string name="dig_all_cells">dig all adjacent cells</string>
-    // ".*"
 </resources>

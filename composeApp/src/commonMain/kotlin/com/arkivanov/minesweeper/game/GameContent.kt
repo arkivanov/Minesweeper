@@ -165,7 +165,7 @@ private fun Int.toCounterString(): String =
     if (this >= 0) {
         coerceAtMost(999).toString().padStart(length = COUNTER_LENGTH, padChar = '0')
     } else {
-        "-" + coerceAtLeast(-99).absoluteValue.toString().padStart(length = COUNTER_LENGTH - 1, padChar = '0')
+        '-' + coerceAtLeast(-99).absoluteValue.toString().padStart(length = COUNTER_LENGTH - 1, padChar = '0')
     }
 
 @Composable
