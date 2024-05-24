@@ -15,7 +15,6 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import javax.swing.SwingUtilities
 
-@OptIn(ExperimentalResourceApi::class)
 fun main() {
     TimeTravelServer(runOnMainThread = { SwingUtilities.invokeLater(it) })
         .start()

@@ -51,7 +51,6 @@ internal data class GameIcons(
     val digits: Map<Char, Painter>,
 )
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun gameIcons(): GameIcons =
     GameIcons(

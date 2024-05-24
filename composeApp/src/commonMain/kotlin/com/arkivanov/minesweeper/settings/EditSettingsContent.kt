@@ -25,7 +25,6 @@ import minesweeper.composeapp.generated.resources.width
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun EditSettingsContent(component: EditSettingsComponent) {
     val model by component.model.subscribeAsState()
