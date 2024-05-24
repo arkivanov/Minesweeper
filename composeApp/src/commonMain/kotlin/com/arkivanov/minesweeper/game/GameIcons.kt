@@ -34,7 +34,6 @@ import minesweeper.composeapp.generated.resources.digit_7
 import minesweeper.composeapp.generated.resources.digit_8
 import minesweeper.composeapp.generated.resources.digit_9
 import minesweeper.composeapp.generated.resources.digit_minus
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 internal data class GameIcons(

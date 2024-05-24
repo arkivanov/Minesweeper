@@ -64,7 +64,6 @@ import minesweeper.composeapp.generated.resources.middle_click
 import minesweeper.composeapp.generated.resources.dig_all_cells
 import minesweeper.composeapp.generated.resources.desc_mines_left
 import minesweeper.composeapp.generated.resources.desc_duration
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.absoluteValue
 
