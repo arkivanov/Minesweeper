@@ -1,0 +1,17 @@
+version:0
+string|app_name|TWluZXN3ZWVwZXI=
+string|apply|QXBwbHk=
+string|cancel|Q2FuY2Vs
+string|desc_duration|RHVyYXRpb246ICVkIHNlY29uZHM=
+string|desc_mines_left|TWluZXMgbGVmdDogJWQ=
+string|dig_all_cells|ZGlnIGFsbCBhZGphY2VudCBjZWxscw==
+string|dig_cell|ZGlnIGEgY2VsbA==
+string|flag_cell|ZmxhZyBhIGNlbGw=
+string|height|SGVpZ2h0
+string|left_click|TGVmdCBjbGljazog
+string|middle_click|TWlkZGxlIGNsaWNrIChvciBMZWZ0ICsgUmlnaHQgY2xpY2ssIG9yIFNoaWZ0ICsgTGVmdCBjbGljayk6IA==
+string|mine_count|TWluZSBjb3VudA==
+string|restart|UmVzdGFydA==
+string|right_click|UmlnaHQgY2xpY2sgKG9yIEN0cmwgKyBMZWZ0IGNsaWNrKTog
+string|settings|U2V0dGluZ3M=
+string|width|V2lkdGg=
