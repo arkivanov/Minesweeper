@@ -64,14 +64,12 @@ import minesweeper.composeapp.generated.resources.middle_click
 import minesweeper.composeapp.generated.resources.dig_all_cells
 import minesweeper.composeapp.generated.resources.desc_mines_left
 import minesweeper.composeapp.generated.resources.desc_duration
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.absoluteValue
 
 private val cellSize = 16.dp
 private const val COUNTER_LENGTH = 3
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun GameContent(component: GameComponent, modifier: Modifier = Modifier) {
     val state by component.state.subscribeAsState()
@@ -178,7 +176,6 @@ private fun CellContent(cell: Cell, modifier: Modifier = Modifier) {
     )
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun RestartButton(
     isWin: Boolean,
@@ -216,7 +213,6 @@ private fun RestartButton(
     )
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun ControlsInfo(modifier: Modifier = Modifier) {
     Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {

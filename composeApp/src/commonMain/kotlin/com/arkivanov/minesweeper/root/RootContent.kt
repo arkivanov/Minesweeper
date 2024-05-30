@@ -22,7 +22,6 @@ import minesweeper.composeapp.generated.resources.settings
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun RootContent(component: RootComponent) {
     val gameComponent by component.gameComponent.subscribeAsState()
